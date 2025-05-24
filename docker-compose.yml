@@ -1,0 +1,17 @@
+services:
+    mongodb:
+        image: mongo:latest
+        container_name: mongodb_container
+        restart: always
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: theuntraceable
+            MONGO_INITDB_ROOT_PASSWORD: ThereNeedsToBeASecretPassword123!
+            MONGO_INITDB_DATABASE: dsr_management
+        volumes:
+            - mongo_data:/data/db
+            - ./mongo-init:/docker-entrypoint-initdb.d
+
+volumes:
+    mongo_data:
