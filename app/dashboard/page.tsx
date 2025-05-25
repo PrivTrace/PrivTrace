@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
+import DSRTable from "@/components/dashboard/DSRTable";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -11,10 +10,10 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { authClient, useSession } from "@/lib/auth-client";
 import { Copy, ExternalLink, LogOut } from "lucide-react";
-import DSRTable from "@/components/dashboard/DSRTable";
-import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface CompanyInfo {
     name: string;
@@ -147,6 +146,29 @@ export default function DashboardPage() {
                                     size="sm"
                                 >
                                     <ExternalLink className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Audit Logs Card */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Audit Logs</CardTitle>
+                            <CardDescription>
+                                View detailed logs of all system activity and changes
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center justify-between">
+                                <div className="text-sm text-muted-foreground">
+                                    Track user logins, DSR changes, and system events
+                                </div>
+                                <Button
+                                    onClick={() => router.push("/dashboard/audit-logs")}
+                                    variant="outline"
+                                >
+                                    View Audit Logs
                                 </Button>
                             </div>
                         </CardContent>

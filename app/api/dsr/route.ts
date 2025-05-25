@@ -1,3 +1,4 @@
+import { createAuditLog, extractAuditContext } from "@/lib/audit-logger";
 import { auth } from "@/lib/auth";
 import { generateDSRNotificationEmail, sendEmail } from "@/lib/mail";
 import { getDb } from "@/lib/mongodb";
@@ -74,6 +75,27 @@ export async function POST(request: NextRequest) {
         const result = await db
             .collection<Omit<DSRRequestDocument, "_id">>("dsrRequests")
             .insertOne(dsrRequest);
+
+        // Create audit log for DSR creation
+        const auditContext = extractAuditContext(request);
+        await createAuditLog({
+            action: "DSR_CREATE",
+            resourceType: "DSR_REQUEST",
+            resourceId: result.insertedId,
+            metadata: {
+                requestType: body.requestType,
+                requesterEmail: body.requesterEmail,
+                requesterName: body.requesterName,
+                companyName: company.name,
+                description: `New DSR request created by ${body.requesterName} (${body.requestType})`
+            },
+            context: {
+                ...auditContext,
+                companyId: company._id,
+                userEmail: body.requesterEmail,
+                userName: body.requesterName
+            }
+        });
 
         // Send email notification to admin
         const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`;

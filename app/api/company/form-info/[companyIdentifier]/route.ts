@@ -4,10 +4,10 @@ import type { CompanyDocument } from "@/types/database";
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { companyIdentifier: string } },
+    { params }: { params: Promise<{ companyIdentifier: string }> },
 ) {
     try {
-        const { companyIdentifier } = params;
+        const { companyIdentifier } = await params;
 
         if (!companyIdentifier) {
             return NextResponse.json(

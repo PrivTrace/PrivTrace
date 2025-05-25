@@ -1,16 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -19,9 +10,18 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Plus } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import type { DSRRequestDocument, InternalNote } from "@/types/database";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 interface DSRDetailViewProps {
     dsr: DSRRequestDocument;
@@ -238,12 +238,12 @@ export default function DSRDetailView({
                     {/* Status Update */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-medium">Update Status</h3>
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-end space-x-4">
                             <div className="flex-1">
                                 <Label htmlFor="status">Status</Label>
                                 <Select
                                     value={status}
-                                    onValueChange={setStatus}
+                                    onValueChange={(value) => setStatus(value as any)}
                                 >
                                     <SelectTrigger>
                                         <SelectValue />

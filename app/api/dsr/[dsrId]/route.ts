@@ -1,3 +1,4 @@
+import { createAuditLog, extractAuditContext } from "@/lib/audit-logger";
 import { auth } from "@/lib/auth";
 import { getDb } from "@/lib/mongodb";
 import type {
@@ -39,7 +40,7 @@ export async function GET(
         // Find company for the authenticated user
         const company = await db
             .collection<CompanyDocument>("companies")
-            .findOne({ adminUserId: session.user.id });
+            .findOne({ adminUserId: session.session.userId });
 
         if (!company) {
             return NextResponse.json(
@@ -62,6 +63,23 @@ export async function GET(
                 { status: 404 },
             );
         }
+
+        // Log DSR view
+        const auditContext = extractAuditContext(request, session);
+        await createAuditLog({
+            action: "DSR_VIEW",
+            resourceType: "DSR_REQUEST",
+            resourceId: dsrId,
+            metadata: {
+                requestType: dsrRequest.requestType,
+                status: dsrRequest.status,
+                description: `DSR viewed by ${session.user.name}`
+            },
+            context: {
+                ...auditContext,
+                companyId: company._id
+            }
+        });
 
         return NextResponse.json(dsrRequest);
     } catch (error) {
@@ -102,14 +120,29 @@ export async function PUT(
 
         const db = await getDb();
 
-        // Find company for the authenticated user
+        // Find company for the authenticated user first
         const company = await db
             .collection<CompanyDocument>("companies")
-            .findOne({ adminUserId: session.user.id });
+            .findOne({ adminUserId: session.session.userId });
 
         if (!company) {
             return NextResponse.json(
                 { error: "Company not found" },
+                { status: 404 },
+            );
+        }
+
+        // Get the current DSR for comparison  
+        const currentDSR = await db
+            .collection<DSRRequestDocument>("dsrRequests")
+            .findOne({
+                _id: new ObjectId(dsrId),
+                companyId: company._id,
+            });
+
+        if (!currentDSR) {
+            return NextResponse.json(
+                { error: "DSR not found" },
                 { status: 404 },
             );
         }
@@ -152,6 +185,41 @@ export async function PUT(
                 { status: 404 },
             );
         }
+
+        // Log the DSR update
+        const auditContext = extractAuditContext(request, session);
+        const changes = Object.keys(updates).filter(key =>
+            currentDSR[key as keyof DSRRequestDocument] !== updates[key as keyof UpdateDSRRequest]
+        );
+
+        const actionType = updates.status && updates.status !== currentDSR.status
+            ? "DSR_STATUS_CHANGE"
+            : updates.internalNotes
+                ? "DSR_NOTE_ADD"
+                : "DSR_UPDATE";
+
+        await createAuditLog({
+            action: actionType,
+            resourceType: "DSR_REQUEST",
+            resourceId: dsrId,
+            metadata: {
+                oldValues: Object.fromEntries(
+                    changes.map(key => [key, currentDSR[key as keyof DSRRequestDocument]])
+                ),
+                newValues: updates,
+                changes,
+                requestType: currentDSR.requestType,
+                description: updates.status && updates.status !== currentDSR.status
+                    ? `DSR status changed from ${currentDSR.status} to ${updates.status} by ${session.user.name}`
+                    : updates.internalNotes
+                        ? `Internal note added to DSR by ${session.user.name}`
+                        : `DSR updated by ${session.user.name}`
+            },
+            context: {
+                ...auditContext,
+                companyId: company._id
+            }
+        });
 
         return NextResponse.json({ success: true });
     } catch (error) {
