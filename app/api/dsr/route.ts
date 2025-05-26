@@ -1,5 +1,6 @@
 import { createAuditLog, extractAuditContext } from "@/lib/audit-logger";
 import { auth } from "@/lib/auth";
+import { encryptDSRData, decryptDSRData } from "@/lib/encryption";
 import {
     generateDSRConfirmationEmail,
     generateDSRNotificationEmail,
@@ -63,13 +64,22 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Create DSR request
-        const dsrRequest: Omit<DSRRequestDocument, "_id"> = {
-            companyId: company._id,
+        // Encrypt sensitive data before storing
+        const encryptedData = encryptDSRData({
             requesterEmail: body.requesterEmail,
             requesterName: body.requesterName,
             requestType: body.requestType,
             details: body.details,
+        });
+
+        // Create DSR request with encrypted data
+        const dsrRequest: Omit<DSRRequestDocument, "_id"> = {
+            companyId: company._id,
+            requesterEmail: encryptedData.requesterEmail,
+            requesterEmailHash: encryptedData.requesterEmailHash,
+            requesterName: encryptedData.requesterName,
+            requestType: encryptedData.requestType,
+            details: encryptedData.details,
             status: "NEW",
             internalNotes: [],
             createdAt: new Date(),
@@ -189,6 +199,14 @@ export async function GET(request: NextRequest) {
         if (status) {
             query.status = status;
         }
+        
+        // If searching by email, use the hash for security
+        const searchEmail = searchParams.get("email");
+        if (searchEmail) {
+            // Import hashValue from the encryption module
+            const { hashValue } = require("@/lib/encryption");
+            query.requesterEmailHash = hashValue(searchEmail.toLowerCase());
+        }
 
         // Get total count
         const total = await db
@@ -196,13 +214,35 @@ export async function GET(request: NextRequest) {
             .countDocuments(query);
 
         // Get paginated results
-        const dsrRequests = await db
+        const encryptedDsrRequests = await db
             .collection<DSRRequestDocument>("dsrRequests")
             .find(query)
             .sort({ [sortBy]: sortOrder })
             .skip((page - 1) * limit)
             .limit(limit)
             .toArray();
+            
+        // Decrypt the DSR data before sending to client
+        const dsrRequests = encryptedDsrRequests.map(dsr => {
+            // Create a copy of the DSR object
+            const decryptedDsr = { ...dsr };
+            
+            // Only decrypt the sensitive fields
+            const decrypted = decryptDSRData({
+                requesterEmail: dsr.requesterEmail,
+                requesterName: dsr.requesterName,
+                requestType: dsr.requestType,
+                details: dsr.details,
+            });
+            
+            // Update with decrypted values
+            decryptedDsr.requesterEmail = decrypted.requesterEmail;
+            decryptedDsr.requesterName = decrypted.requesterName;
+            decryptedDsr.requestType = decrypted.requestType as any;
+            decryptedDsr.details = decrypted.details;
+            
+            return decryptedDsr;
+        });
 
         return NextResponse.json({
             dsrRequests,

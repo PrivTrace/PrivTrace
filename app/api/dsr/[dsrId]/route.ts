@@ -1,5 +1,6 @@
 import { createAuditLog, extractAuditContext } from "@/lib/audit-logger";
 import { auth } from "@/lib/auth";
+import { decryptDSRData } from "@/lib/encryption";
 import { getDb } from "@/lib/mongodb";
 import type {
     CompanyDocument,
@@ -50,19 +51,36 @@ export async function GET(
         }
 
         // Find DSR and ensure it belongs to the user's company
-        const dsrRequest = await db
+        const encryptedDsrRequest = await db
             .collection<DSRRequestDocument>("dsrRequests")
             .findOne({
                 _id: new ObjectId(dsrId),
                 companyId: company._id,
             });
 
-        if (!dsrRequest) {
+        if (!encryptedDsrRequest) {
             return NextResponse.json(
                 { error: "DSR not found" },
                 { status: 404 },
             );
         }
+        
+        // Decrypt sensitive data
+        const decrypted = decryptDSRData({
+            requesterEmail: encryptedDsrRequest.requesterEmail,
+            requesterName: encryptedDsrRequest.requesterName,
+            requestType: encryptedDsrRequest.requestType,
+            details: encryptedDsrRequest.details,
+        });
+        
+        // Create a copy with decrypted values
+        const dsrRequest = { 
+            ...encryptedDsrRequest,
+            requesterEmail: decrypted.requesterEmail,
+            requesterName: decrypted.requesterName,
+            requestType: decrypted.requestType as any,
+            details: decrypted.details,
+        };
 
         // Log DSR view
         const auditContext = extractAuditContext(request, session);

@@ -17,6 +17,7 @@
         "@aws-sdk/credential-providers": "latest",
         "@heroui/alert": "^2.2.19",
         "@heroui/chip": "^2.2.15",
+        "@heroui/input": "^2.4.19",
         "@heroui/system": "^2.4.15",
         "@heroui/theme": "^2.4.15",
         "@heroui/toast": "^2.0.9",

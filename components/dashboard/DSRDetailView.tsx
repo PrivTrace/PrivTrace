@@ -1,5 +1,7 @@
 "use client";
 
+import { Input } from "@heroui/input"
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +24,8 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import type { DSRRequestDocument, InternalNote } from "@/types/database";
+import { Alert } from "@heroui/alert";
+import { Chip } from "@heroui/chip";
 
 interface DSRDetailViewProps {
     dsr: DSRRequestDocument;
@@ -154,65 +158,63 @@ export default function DSRDetailView({
                 </DialogHeader>
 
                 {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                        <p className="text-sm text-red-800">{error}</p>
-                    </div>
+                    <Alert title="Error" description={error} variant="faded" color="danger" />
                 )}
 
                 <div className="space-y-6">
                     {/* Request Information */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-4">
-                            <div>
-                                <Label className="text-sm font-medium text-gray-500">
+                            <div className="border p-4 rounded-md">
+                                <Label className="text-sm font-medium text-gray-300">
                                     Requester Name
                                 </Label>
                                 <p className="text-lg font-medium">
                                     {dsr.requesterName}
                                 </p>
                             </div>
-                            <div>
-                                <Label className="text-sm font-medium text-gray-500">
+                            <div className="border p-4 rounded-md">
+                                <Label className="text-sm font-medium text-gray-300">
                                     Email
                                 </Label>
                                 <p>{dsr.requesterEmail}</p>
                             </div>
-                            <div>
-                                <Label className="text-sm font-medium text-gray-500">
+                            <div className="gap-3 flex items-center">
+                                <Label className="text-sm font-medium text-gray-300">
                                     Request Type
                                 </Label>
-                                <Badge variant="outline" className="mt-1">
+                                <Chip variant="bordered" radius="sm" size="sm" className="mt-1">
                                     {dsr.requestType.replace("_", " ")}
-                                </Badge>
+                                </Chip>
                             </div>
                         </div>
 
                         <div className="space-y-4">
-                            <div>
-                                <Label className="text-sm font-medium text-gray-500">
+                            <div className="border p-4 rounded-md">
+                                <Label className="text-sm font-medium text-gray-300">
                                     Current Status
                                 </Label>
                                 <div className="mt-1">
                                     {getStatusBadge(dsr.status)}
                                 </div>
                             </div>
-                            <div>
-                                <Label className="text-sm font-medium text-gray-500">
+                            <div className="border p-4 rounded-md">
+                                <Label className="text-sm font-medium text-gray-300">
                                     Submitted
                                 </Label>
                                 <p>{formatDate(dsr.createdAt)}</p>
                             </div>
                             {dsr.acknowledgedAt && (
-                                <div>
-                                    <Label className="text-sm font-medium text-gray-500">
+                                <div className="border p-4 rounded-md">
+                                    <Label className="text-sm font-medium text-gray-300">
                                         Acknowledged
                                     </Label>
                                     <p>{formatDate(dsr.acknowledgedAt)}</p>
                                 </div>
                             )}
                             {dsr.completedAt && (
-                                <div>
-                                    <Label className="text-sm font-medium text-gray-500">
+                                <div className="border p-4 rounded-md">
+                                    <Label className="text-sm font-medium text-gray-300">
                                         Completed
                                     </Label>
                                     <p>{formatDate(dsr.completedAt)}</p>
@@ -224,59 +226,56 @@ export default function DSRDetailView({
                     {/* Request Details */}
                     {dsr.details && (
                         <div>
-                            <Label className="text-sm font-medium text-gray-500">
-                                Additional Details
-                            </Label>
-                            <div className="mt-2 p-3 bg-gray-50 rounded-md">
-                                <p className="text-sm">{dsr.details}</p>
-                            </div>
+                            <Input value={dsr.details} label="Additional Details" variant="bordered" isReadOnly />
                         </div>
                     )}
 
                     <Separator />
 
                     {/* Status Update */}
-                    <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
                         <h3 className="text-lg font-medium">Update Status</h3>
-                        <div className="flex items-center space-x-4">
-                            <div className="flex-1">
-                                <Label htmlFor="status">Status</Label>
-                                <Select
-                                    value={status}
-                                    onValueChange={setStatus as any}
+                        <div className="w-full">
+                            <Label htmlFor="status">Status</Label>
+                            <div className="flex items-center gap-4 mt-2 w-full">
+                                <div className="flex-1">
+                                    <Select
+                                        value={status}
+                                        onValueChange={setStatus as any}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="NEW">New</SelectItem>
+                                            <SelectItem value="PENDING_VERIFICATION">
+                                                Pending Verification
+                                            </SelectItem>
+                                            <SelectItem value="IN_PROGRESS">
+                                                In Progress
+                                            </SelectItem>
+                                            <SelectItem value="COMPLETED">
+                                                Completed
+                                            </SelectItem>
+                                            <SelectItem value="REJECTED">
+                                                Rejected
+                                            </SelectItem>
+                                            <SelectItem value="CANCELLED">
+                                                Cancelled
+                                            </SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <Button
+                                    onClick={handleStatusUpdate}
+                                    disabled={loading || status === dsr.status}
+                                    className="whitespace-nowrap"
                                 >
-                                    <SelectTrigger>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="NEW">New</SelectItem>
-                                        <SelectItem value="PENDING_VERIFICATION">
-                                            Pending Verification
-                                        </SelectItem>
-                                        <SelectItem value="IN_PROGRESS">
-                                            In Progress
-                                        </SelectItem>
-                                        <SelectItem value="COMPLETED">
-                                            Completed
-                                        </SelectItem>
-                                        <SelectItem value="REJECTED">
-                                            Rejected
-                                        </SelectItem>
-                                        <SelectItem value="CANCELLED">
-                                            Cancelled
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                    {loading ? "Updating..." : "Update Status"}
+                                </Button>
                             </div>
-                            <Button
-                                onClick={handleStatusUpdate}
-                                disabled={loading || status === dsr.status}
-                            >
-                                {loading ? "Updating..." : "Update Status"}
-                            </Button>
                         </div>
                     </div>
-
                     <Separator />
 
                     {/* Internal Notes */}
@@ -289,10 +288,10 @@ export default function DSRDetailView({
                                 {dsr.internalNotes.map((note, index) => (
                                     <div
                                         key={index}
-                                        className="border rounded-md p-3 bg-gray-50"
+                                        className="border rounded-md p-3 "
                                     >
                                         <p className="text-sm">{note.note}</p>
-                                        <p className="text-xs text-gray-500 mt-2">
+                                        <p className="text-xs text-gray-300 mt-2">
                                             {formatDate(note.timestamp)} •{" "}
                                             {note.adminUserId}
                                         </p>

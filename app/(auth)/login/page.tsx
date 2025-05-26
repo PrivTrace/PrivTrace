@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,19 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { data: session, isPending } = authClient.useSession();
+
+    useEffect(() => {
+        // Redirect to dashboard if user is already logged in
+        if (!isPending && session) {
+            router.push("/dashboard");
+        }
+    }, [
+        session,
+        isPending,
+        router,
+    ])
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

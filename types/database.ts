@@ -19,10 +19,11 @@ export interface InternalNote {
 export interface DSRRequestDocument extends Document {
     _id: ObjectId;
     companyId: ObjectId;
-    requesterEmail: string;
-    requesterName: string;
-    requestType: "ACCESS" | "DELETE" | "CORRECT" | "OTHER";
-    details?: string;
+    requesterEmail: string; // Encrypted
+    requesterEmailHash: string; // Hashed for searching
+    requesterName: string; // Encrypted
+    requestType: "ACCESS" | "DELETE" | "CORRECT" | "OTHER"; // Encrypted
+    details?: string; // Encrypted if present
     status:
         | "NEW"
         | "PENDING_VERIFICATION"

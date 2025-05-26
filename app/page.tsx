@@ -11,7 +11,7 @@ import { Shield, Users, FileText, Clock } from "lucide-react";
 
 export default function HomePage() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background to-muted/80">
+        <div className="min-h-screen">
             {/* Header */}
             <header className="bg-card shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -178,7 +178,7 @@ export default function HomePage() {
             </main>
 
             {/* Footer */}
-            <footer className="bg-muted text-muted-foreground py-8 mt-16">
+            <footer className="border-t border-zinc-200 dark:border-zinc-700 text-muted-foreground py-8 mt-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <div className="flex items-center justify-center mb-4">

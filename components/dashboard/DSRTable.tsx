@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -31,8 +32,9 @@ interface PaginationInfo {
     totalPages: number;
 }
 
-export default function DSRTable({}: DSRTableProps) {
-    const [dsrRequests, setDsrRequests] = useState<DSRRequestDocument[]>([]);
+export default function DSRTable({ }: DSRTableProps) {
+    const [allDsrRequests, setAllDsrRequests] = useState<DSRRequestDocument[]>([]);
+    const [displayedDsrRequests, setDisplayedDsrRequests] = useState<DSRRequestDocument[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [selectedDSR, setSelectedDSR] = useState<DSRRequestDocument | null>(
@@ -45,21 +47,50 @@ export default function DSRTable({}: DSRTableProps) {
         totalPages: 0,
     });
     const [filters, setFilters] = useState({
-        status: "ALL", // Updated default value to 'ALL'
+        status: "ALL",
         sortBy: "createdAt",
         sortOrder: "desc",
+        email: "",
     });
 
     useEffect(() => {
         fetchDSRRequests();
-    }, [pagination.page, filters]);
+    }, [pagination.page, filters.status, filters.sortBy, filters.sortOrder]);
+
+    useEffect(() => {
+        // Client-side filtering for email
+        if (allDsrRequests.length > 0) {
+            const filtered = filterByEmail(allDsrRequests, filters.email);
+
+            const startIndex = (pagination.page - 1) * pagination.limit;
+            const endIndex = startIndex + pagination.limit;
+
+            setDisplayedDsrRequests(filtered.slice(startIndex, endIndex));
+
+            // Update pagination based on filtered results
+            setPagination(prev => ({
+                ...prev,
+                total: filtered.length,
+                totalPages: Math.ceil(filtered.length / prev.limit)
+            }));
+        }
+    }, [filters.email, allDsrRequests, pagination.page, pagination.limit]);
+
+    const filterByEmail = (requests: DSRRequestDocument[], email: string) => {
+        if (!email.trim()) return requests;
+
+        const lowerEmail = email.toLowerCase();
+        return requests.filter(dsr =>
+            dsr.requesterEmail.toLowerCase().includes(lowerEmail)
+        );
+    };
 
     const fetchDSRRequests = async () => {
         setLoading(true);
         try {
             const params = new URLSearchParams({
-                page: pagination.page.toString(),
-                limit: pagination.limit.toString(),
+                page: "1", // Get all records for client-side filtering
+                limit: "1000", // Use a large limit to get all records
                 sortBy: filters.sortBy,
                 sortOrder: filters.sortOrder,
             });
@@ -74,8 +105,18 @@ export default function DSRTable({}: DSRTableProps) {
             }
 
             const data = await response.json();
-            setDsrRequests(data.dsrRequests);
-            setPagination(data.pagination);
+            setAllDsrRequests(data.dsrRequests);
+
+            // Initial filtering
+            const filtered = filterByEmail(data.dsrRequests, filters.email);
+            setDisplayedDsrRequests(filtered.slice(0, pagination.limit));
+
+            // Update pagination
+            setPagination(prev => ({
+                ...prev,
+                total: filtered.length,
+                totalPages: Math.ceil(filtered.length / prev.limit)
+            }));
         } catch (err) {
             setError("Failed to load DSR requests");
         } finally {
@@ -116,11 +157,11 @@ export default function DSRTable({}: DSRTableProps) {
         setPagination((prev) => ({ ...prev, page: newPage }));
     };
 
-    if (loading && dsrRequests.length === 0) {
+    if (loading && displayedDsrRequests.length === 0) {
         return (
             <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                <p className="mt-2 text-gray-600">Loading DSR requests...</p>
+                <p className="mt-2 text-gray-300">Loading DSR requests...</p>
             </div>
         );
     }
@@ -141,6 +182,32 @@ export default function DSRTable({}: DSRTableProps) {
             <div className="space-y-4">
                 {/* Filters */}
                 <div className="flex flex-col sm:flex-row gap-4">
+                    {/* Email search input */}
+                    <div className="relative w-full sm:w-64">
+                        <Input
+                            type="email"
+                            placeholder="Search by email"
+                            className="w-full p-2 border rounded-md"
+                            value={filters.email}
+                            onChange={(e) => {
+                                setFilters((prev) => ({
+                                    ...prev,
+                                    email: e.target.value
+                                }));
+                            }}
+                        />
+                        {filters.email && (
+                            <button
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                                onClick={() => {
+                                    setFilters((prev) => ({ ...prev, email: '' }));
+                                }}
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
+
                     <Select
                         value={filters.status}
                         onValueChange={(value) =>
@@ -209,7 +276,7 @@ export default function DSRTable({}: DSRTableProps) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {dsrRequests.length === 0 ? (
+                            {displayedDsrRequests.length === 0 ? (
                                 <TableRow>
                                     <TableCell
                                         colSpan={5}
@@ -219,7 +286,7 @@ export default function DSRTable({}: DSRTableProps) {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                dsrRequests.map((dsr) => (
+                                displayedDsrRequests.map((dsr) => (
                                     <TableRow key={dsr._id.toString()}>
                                         <TableCell>
                                             <div>

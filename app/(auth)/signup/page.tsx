@@ -2,12 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
     Card,
     CardContent,
@@ -15,8 +10,13 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth-client";
 import { Alert } from "@heroui/alert";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function SignUpPage() {
     const [formData, setFormData] = useState({
@@ -28,6 +28,18 @@ export default function SignUpPage() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { data: session, isPending } = authClient.useSession();
+
+    useEffect(() => {
+        // Redirect to dashboard if user is already logged in
+        if (!isPending && session) {
+            router.push("/dashboard");
+        }
+    }, [
+        session,
+        isPending,
+        router,
+    ])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -172,7 +184,7 @@ export default function SignUpPage() {
                     </form>
 
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-300">
                             Already have an account?{" "}
                             <Link
                                 href="/login"
