@@ -2,17 +2,8 @@
 
 import { Input } from "@heroui/input";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -21,22 +12,33 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Plus } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import type { DSRRequestDocument, InternalNote } from "@/types/database";
 import { Alert } from "@heroui/alert";
 import { Chip } from "@heroui/chip";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 interface DSRDetailViewProps {
     dsr: DSRRequestDocument;
     onClose: () => void;
     onUpdate: () => void;
+    onAuditLogUpdate?: () => void; // NEW: callback for audit log refresh
 }
 
 export default function DSRDetailView({
     dsr,
     onClose,
     onUpdate,
+    onAuditLogUpdate, // NEW
 }: DSRDetailViewProps) {
     const [status, setStatus] = useState(dsr.status);
     const [newNote, setNewNote] = useState("");
@@ -56,7 +58,6 @@ export default function DSRDetailView({
     const handleStatusUpdate = async () => {
         setLoading(true);
         setError("");
-
         try {
             const updateData: any = { status };
 
@@ -78,12 +79,11 @@ export default function DSRDetailView({
                 },
                 body: JSON.stringify(updateData),
             });
-
             if (!response.ok) {
                 throw new Error("Failed to update DSR");
             }
-
             onUpdate();
+            if (onAuditLogUpdate) onAuditLogUpdate(); // NEW: trigger audit log refetch
             onClose();
         } catch (err) {
             setError("Failed to update status");
@@ -94,33 +94,34 @@ export default function DSRDetailView({
 
     const handleAddNote = async () => {
         if (!newNote.trim()) return;
-
         setLoading(true);
         setError("");
-
         try {
             const newNoteObj: InternalNote = {
                 note: newNote.trim(),
                 adminUserId: "current-user", // This should come from session
                 timestamp: new Date(),
             };
-
             const updatedNotes = [...dsr.internalNotes, newNoteObj];
-
+            let updateBody: any = { internalNotes: updatedNotes };
+            if (["NEW", "PENDING_VERIFICATION", "PENDING"].includes(dsr.status)) {
+                updateBody.status = "IN_PROGRESS";
+            }
             const response = await fetch(`/api/dsr/${dsr._id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ internalNotes: updatedNotes }),
+                body: JSON.stringify(updateBody),
             });
-
             if (!response.ok) {
                 throw new Error("Failed to add note");
             }
-
             setNewNote("");
-            onUpdate();
+            // Pass a new object to onUpdate to force parent rerender
+            onUpdate && onUpdate();
+            if (onAuditLogUpdate) onAuditLogUpdate();
+            onClose();
         } catch (err) {
             setError("Failed to add note");
         } finally {

@@ -24,7 +24,9 @@ import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import DSRDetailView from "./DSRDetailView";
 
-type DSRTableProps = {};
+type DSRTableProps = {
+    onAuditLogUpdate?: () => void;
+};
 
 interface PaginationInfo {
     page: number;
@@ -33,7 +35,7 @@ interface PaginationInfo {
     totalPages: number;
 }
 
-export default function DSRTable({ }: DSRTableProps) {
+export default function DSRTable({ onAuditLogUpdate }: DSRTableProps) {
     const [filters, setFilters] = useState({
         status: "ALL",
         sortBy: "createdAt",
@@ -355,6 +357,7 @@ export default function DSRTable({ }: DSRTableProps) {
                     dsr={selectedDSR}
                     onClose={() => setSelectedDSR(null)}
                     onUpdate={refetch}
+                    onAuditLogUpdate={onAuditLogUpdate}
                 />
             )}
         </>

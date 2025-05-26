@@ -15,7 +15,7 @@ import { Alert } from "@heroui/alert";
 import { Input } from "@heroui/input";
 import { Copy, ExternalLink, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface CompanyInfo {
     name: string;
@@ -29,6 +29,7 @@ export default function DashboardPage() {
     const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [auditLogRefreshKey, setAuditLogRefreshKey] = useState(0);
 
     useEffect(() => {
         if (!isPending && !session) {
@@ -68,6 +69,11 @@ export default function DashboardPage() {
             // You could add a toast notification here
         }
     };
+
+    // Callback to trigger audit log refetch
+    const handleAuditLogUpdate = useCallback(() => {
+        setAuditLogRefreshKey((k) => k + 1);
+    }, []);
 
     if (isPending || loading) {
         return (
@@ -165,11 +171,11 @@ export default function DashboardPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <DSRTable />
+                            <DSRTable onAuditLogUpdate={handleAuditLogUpdate} />
                         </CardContent>
                     </Card>
                     {/* Audit Log */}
-                    <AuditLogsTable />
+                    <AuditLogsTable key={auditLogRefreshKey} />
 
                     {/* DSR Requests Table */}
                 </div>
