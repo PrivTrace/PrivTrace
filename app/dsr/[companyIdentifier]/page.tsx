@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 async function getCompanyInfo(companyIdentifier: string) {
     try {
         const response = await fetch(
-            `https://dev.untraceable.dev/api/company/form-info/${companyIdentifier}`,
+            `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/company/form-info/${companyIdentifier}`,
             {
                 cache: "no-store",
             },
@@ -41,7 +41,7 @@ export default async function DSRPage({
                     <p className="mt-2 text-lg text-gray-300">
                         Submit a request to {companyInfo.name}
                     </p>
-                    <p className="mt-4 text-sm text-gray-300">
+                    <p className="mt-4 text-\sm text-gray-300">
                         Use this form to request access to, correction of, or
                         deletion of your personal data in accordance with
                         applicable privacy regulations.
