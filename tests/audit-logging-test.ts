@@ -17,38 +17,51 @@ async function testAuditLogging() {
             metadata: {
                 description: "Test audit log creation",
                 severity: "MEDIUM",
-                requestType: "ACCESS"
+                requestType: "ACCESS",
             },
             context: {
                 userId: testUserId,
                 userEmail: "test@example.com",
                 userName: "Test User",
                 ipAddress: "127.0.0.1",
-                userAgent: "Test User Agent"
-            }
+                userAgent: "Test User Agent",
+            },
         });
 
-        console.log("✅ Audit log created successfully:", auditLogId.toString());
+        console.log(
+            "✅ Audit log created successfully:",
+            auditLogId.toString(),
+        );
 
         // Test retrieving audit logs
         const logs = await getAuditLogs({
             limit: 5,
             sortBy: "timestamp",
-            sortOrder: "desc"
+            sortOrder: "desc",
         });
 
-        console.log("✅ Retrieved audit logs:", logs.logs.length, "total:", logs.total);
+        console.log(
+            "✅ Retrieved audit logs:",
+            logs.logs.length,
+            "total:",
+            logs.total,
+        );
 
         // Test filtering by action
         const filteredLogs = await getAuditLogs({
             action: "DSR_CREATE",
-            limit: 5
+            limit: 5,
         });
 
-        console.log("✅ Filtered audit logs by action:", filteredLogs.logs.length);
+        console.log(
+            "✅ Filtered audit logs by action:",
+            filteredLogs.logs.length,
+        );
 
         // Verify the test audit log exists
-        const testLog = logs.logs.find(log => log._id.toString() === auditLogId.toString());
+        const testLog = logs.logs.find(
+            (log) => log._id.toString() === auditLogId.toString(),
+        );
         if (testLog) {
             console.log("✅ Test audit log found in results");
             console.log("   Action:", testLog.action);
@@ -65,7 +78,6 @@ async function testAuditLogging() {
         console.log("✅ Test data cleaned up");
 
         console.log("\n🎉 All audit logging tests passed!");
-
     } catch (error) {
         console.error("❌ Audit logging test failed:", error);
         throw error;

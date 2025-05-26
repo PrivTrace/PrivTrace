@@ -13,16 +13,16 @@ export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
     try {
         const resend = new Resend(process.env.RESEND_KEY);
         const { data, error } = await resend.emails.send({
-          from: process.env.EMAIL_FROM || "noreply@data.untraceable.dev",
-          to,
-          subject,
-          html,
-          text: text || html.replace(/<[^>]*>/g, ""), // Strip HTML for text version
-        })
+            from: process.env.EMAIL_FROM || "noreply@data.untraceable.dev",
+            to,
+            subject,
+            html,
+            text: text || html.replace(/<[^>]*>/g, ""), // Strip HTML for text version
+        });
 
         if (error) {
-          console.error("Email sending failed:", error)
-          return { success: false, error: error.message }
+            console.error("Email sending failed:", error);
+            return { success: false, error: error.message };
         }
 
         // // Simulate email sending with console.log
@@ -86,7 +86,6 @@ export function generateDSRNotificationEmail(
 
     return { subject, html };
 }
-
 
 export function generateDSRConfirmationEmail(
     dsrRequest: {

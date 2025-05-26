@@ -98,7 +98,9 @@ export default function DashboardPage() {
                             <h1 className="text-3xl font-bold text-foreground">
                                 DSR Dashboard
                             </h1>
-                            <p className="text-muted-foreground">{companyInfo?.name}</p>
+                            <p className="text-muted-foreground">
+                                {companyInfo?.name}
+                            </p>
                         </div>
                         <Button onClick={handleSignOut} variant="outline">
                             <LogOut className="h-4 w-4 mr-2" />
@@ -156,16 +158,20 @@ export default function DashboardPage() {
                         <CardHeader>
                             <CardTitle>Audit Logs</CardTitle>
                             <CardDescription>
-                                View detailed logs of all system activity and changes
+                                View detailed logs of all system activity and
+                                changes
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center justify-between">
                                 <div className="text-sm text-muted-foreground">
-                                    Track user logins, DSR changes, and system events
+                                    Track user logins, DSR changes, and system
+                                    events
                                 </div>
                                 <Button
-                                    onClick={() => router.push("/dashboard/audit-logs")}
+                                    onClick={() =>
+                                        router.push("/dashboard/audit-logs")
+                                    }
                                     variant="outline"
                                 >
                                     View Audit Logs

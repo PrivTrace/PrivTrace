@@ -73,12 +73,12 @@ export async function GET(
             metadata: {
                 requestType: dsrRequest.requestType,
                 status: dsrRequest.status,
-                description: `DSR viewed by ${session.user.name}`
+                description: `DSR viewed by ${session.user.name}`,
             },
             context: {
                 ...auditContext,
-                companyId: company._id
-            }
+                companyId: company._id,
+            },
         });
 
         return NextResponse.json(dsrRequest);
@@ -132,7 +132,7 @@ export async function PUT(
             );
         }
 
-        // Get the current DSR for comparison  
+        // Get the current DSR for comparison
         const currentDSR = await db
             .collection<DSRRequestDocument>("dsrRequests")
             .findOne({
@@ -188,15 +188,18 @@ export async function PUT(
 
         // Log the DSR update
         const auditContext = extractAuditContext(request, session);
-        const changes = Object.keys(updates).filter(key =>
-            currentDSR[key as keyof DSRRequestDocument] !== updates[key as keyof UpdateDSRRequest]
+        const changes = Object.keys(updates).filter(
+            (key) =>
+                currentDSR[key as keyof DSRRequestDocument] !==
+                updates[key as keyof UpdateDSRRequest],
         );
 
-        const actionType = updates.status && updates.status !== currentDSR.status
-            ? "DSR_STATUS_CHANGE"
-            : updates.internalNotes
-                ? "DSR_NOTE_ADD"
-                : "DSR_UPDATE";
+        const actionType =
+            updates.status && updates.status !== currentDSR.status
+                ? "DSR_STATUS_CHANGE"
+                : updates.internalNotes
+                  ? "DSR_NOTE_ADD"
+                  : "DSR_UPDATE";
 
         await createAuditLog({
             action: actionType,
@@ -204,21 +207,25 @@ export async function PUT(
             resourceId: dsrId,
             metadata: {
                 oldValues: Object.fromEntries(
-                    changes.map(key => [key, currentDSR[key as keyof DSRRequestDocument]])
+                    changes.map((key) => [
+                        key,
+                        currentDSR[key as keyof DSRRequestDocument],
+                    ]),
                 ),
                 newValues: updates,
                 changes,
                 requestType: currentDSR.requestType,
-                description: updates.status && updates.status !== currentDSR.status
-                    ? `DSR status changed from ${currentDSR.status} to ${updates.status} by ${session.user.name}`
-                    : updates.internalNotes
-                        ? `Internal note added to DSR by ${session.user.name}`
-                        : `DSR updated by ${session.user.name}`
+                description:
+                    updates.status && updates.status !== currentDSR.status
+                        ? `DSR status changed from ${currentDSR.status} to ${updates.status} by ${session.user.name}`
+                        : updates.internalNotes
+                          ? `Internal note added to DSR by ${session.user.name}`
+                          : `DSR updated by ${session.user.name}`,
             },
             context: {
                 ...auditContext,
-                companyId: company._id
-            }
+                companyId: company._id,
+            },
         });
 
         return NextResponse.json({ success: true });

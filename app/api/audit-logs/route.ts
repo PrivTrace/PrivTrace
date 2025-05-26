@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
         if (!session) {
             return NextResponse.json(
                 { error: "Unauthorized" },
-                { status: 401 }
+                { status: 401 },
             );
         }
 
@@ -29,21 +29,26 @@ export async function GET(request: NextRequest) {
         const endDate = searchParams.get("endDate");
         const limit = parseInt(searchParams.get("limit") || "50");
         const skip = parseInt(searchParams.get("skip") || "0");
-        const sortBy = searchParams.get("sortBy") as "timestamp" | "action" | "resourceType" || "timestamp";
-        const sortOrder = searchParams.get("sortOrder") as "asc" | "desc" || "desc";        // Verify user has access to the company
+        const sortBy =
+            (searchParams.get("sortBy") as
+                | "timestamp"
+                | "action"
+                | "resourceType") || "timestamp";
+        const sortOrder =
+            (searchParams.get("sortOrder") as "asc" | "desc") || "desc"; // Verify user has access to the company
         if (companyId) {
             const db = await getDb();
             const company = await db
                 .collection<CompanyDocument>("companies")
                 .findOne({
                     _id: new ObjectId(companyId),
-                    adminUserId: session.session.userId
+                    adminUserId: session.session.userId,
                 });
 
             if (!company) {
                 return NextResponse.json(
                     { error: "Access denied to company audit logs" },
-                    { status: 403 }
+                    { status: 403 },
                 );
             }
         }
@@ -53,7 +58,7 @@ export async function GET(request: NextRequest) {
             limit: Math.min(limit, 100), // Cap at 100 for performance
             skip,
             sortBy,
-            sortOrder
+            sortOrder,
         };
 
         if (companyId) {
@@ -74,7 +79,7 @@ export async function GET(request: NextRequest) {
 
         if (endDate) {
             filterOptions.endDate = new Date(endDate);
-        }        // If no specific company is requested, only show logs for companies this user manages
+        } // If no specific company is requested, only show logs for companies this user manages
         if (!companyId) {
             const db = await getDb();
             const userCompanies = await db
@@ -86,7 +91,7 @@ export async function GET(request: NextRequest) {
                 return NextResponse.json({
                     logs: [],
                     total: 0,
-                    hasMore: false
+                    hasMore: false,
                 });
             }
 
@@ -94,8 +99,10 @@ export async function GET(request: NextRequest) {
             // For now, we'll require a specific companyId
             if (userCompanies.length > 1) {
                 return NextResponse.json(
-                    { error: "Please specify a companyId when managing multiple companies" },
-                    { status: 400 }
+                    {
+                        error: "Please specify a companyId when managing multiple companies",
+                    },
+                    { status: 400 },
                 );
             }
 
@@ -105,12 +112,11 @@ export async function GET(request: NextRequest) {
         const result = await getAuditLogs(filterOptions);
 
         return NextResponse.json(result);
-
     } catch (error) {
         console.error("Error retrieving audit logs:", error);
         return NextResponse.json(
             { error: "Internal server error" },
-            { status: 500 }
+            { status: 500 },
         );
     }
 }

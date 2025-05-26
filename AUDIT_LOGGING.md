@@ -66,7 +66,7 @@ Full-featured audit log viewer with:
 ### User Actions
 
 - `USER_LOGIN` - User authentication
-- `USER_LOGOUT` - User session termination  
+- `USER_LOGOUT` - User session termination
 - `USER_REGISTER` - New user registration
 - `USER_PASSWORD_CHANGE` - Password updates
 - `USER_EMAIL_VERIFY` - Email verification
@@ -129,17 +129,17 @@ import { createAuditLog } from "@/lib/audit-logger";
 
 await createAuditLog({
     action: "DSR_CREATE",
-    resourceType: "DSR_REQUEST", 
+    resourceType: "DSR_REQUEST",
     resourceId: dsrId,
     metadata: {
         description: "New DSR request created",
-        requestType: "ACCESS"
+        requestType: "ACCESS",
     },
     context: {
         userId: session.userId,
         userEmail: session.user.email,
-        ipAddress: "192.168.1.1"
-    }
+        ipAddress: "192.168.1.1",
+    },
 });
 ```
 
@@ -153,7 +153,7 @@ const logs = await getAuditLogs({
     startDate: new Date("2024-01-01"),
     endDate: new Date("2024-12-31"),
     action: "DSR_CREATE",
-    limit: 50
+    limit: 50,
 });
 ```
 

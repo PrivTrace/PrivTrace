@@ -24,12 +24,12 @@ export interface DSRRequestDocument extends Document {
     requestType: "ACCESS" | "DELETE" | "CORRECT" | "OTHER";
     details?: string;
     status:
-    | "NEW"
-    | "PENDING_VERIFICATION"
-    | "IN_PROGRESS"
-    | "COMPLETED"
-    | "REJECTED"
-    | "CANCELLED";
+        | "NEW"
+        | "PENDING_VERIFICATION"
+        | "IN_PROGRESS"
+        | "COMPLETED"
+        | "REJECTED"
+        | "CANCELLED";
     internalNotes: InternalNote[];
     createdAt: Date;
     updatedAt: Date;

@@ -3,13 +3,13 @@ import { createAuditLog, extractAuditContext } from "./audit-logger";
 import type { Session } from "./auth";
 
 /**
- * Logs user authentication events manually 
+ * Logs user authentication events manually
  * Call this after successful login operations
  */
 export async function logUserLogin(session: Session, request: NextRequest) {
     try {
         const auditContext = extractAuditContext(request, session);
-        
+
         await createAuditLog({
             action: "USER_LOGIN",
             resourceType: "SESSION",
@@ -17,9 +17,9 @@ export async function logUserLogin(session: Session, request: NextRequest) {
             metadata: {
                 userEmail: session.user.email,
                 userName: session.user.name,
-                description: `User ${session.user.name} logged in`
+                description: `User ${session.user.name} logged in`,
             },
-            context: auditContext
+            context: auditContext,
         });
     } catch (error) {
         console.error("Failed to log user login:", error);
@@ -33,17 +33,17 @@ export async function logUserLogin(session: Session, request: NextRequest) {
 export async function logUserLogout(session: Session, request: NextRequest) {
     try {
         const auditContext = extractAuditContext(request, session);
-        
+
         await createAuditLog({
             action: "USER_LOGOUT",
-            resourceType: "SESSION", 
+            resourceType: "SESSION",
             resourceId: session.session.id,
             metadata: {
                 userEmail: session.user.email,
                 userName: session.user.name,
-                description: `User ${session.user.name} logged out`
+                description: `User ${session.user.name} logged out`,
             },
-            context: auditContext
+            context: auditContext,
         });
     } catch (error) {
         console.error("Failed to log user logout:", error);
@@ -56,11 +56,11 @@ export async function logUserLogout(session: Session, request: NextRequest) {
  */
 export async function logUserRegistration(
     user: { id: string; email: string; name: string },
-    request: NextRequest
+    request: NextRequest,
 ) {
     try {
         const auditContext = extractAuditContext(request);
-        
+
         await createAuditLog({
             action: "USER_REGISTER",
             resourceType: "USER",
@@ -68,14 +68,14 @@ export async function logUserRegistration(
             metadata: {
                 userEmail: user.email,
                 userName: user.name,
-                description: `User ${user.name} registered`
+                description: `User ${user.name} registered`,
             },
             context: {
                 ...auditContext,
                 userId: user.id,
                 userEmail: user.email,
-                userName: user.name
-            }
+                userName: user.name,
+            },
         });
     } catch (error) {
         console.error("Failed to log user registration:", error);
@@ -85,10 +85,13 @@ export async function logUserRegistration(
 /**
  * Logs password change events
  */
-export async function logPasswordChange(session: Session, request: NextRequest) {
+export async function logPasswordChange(
+    session: Session,
+    request: NextRequest,
+) {
     try {
         const auditContext = extractAuditContext(request, session);
-        
+
         await createAuditLog({
             action: "USER_PASSWORD_CHANGE",
             resourceType: "USER",
@@ -96,9 +99,9 @@ export async function logPasswordChange(session: Session, request: NextRequest) 
             metadata: {
                 userEmail: session.user.email,
                 userName: session.user.name,
-                description: `User ${session.user.name} changed password`
+                description: `User ${session.user.name} changed password`,
             },
-            context: auditContext
+            context: auditContext,
         });
     } catch (error) {
         console.error("Failed to log password change:", error);

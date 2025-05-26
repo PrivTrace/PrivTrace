@@ -11,7 +11,7 @@ export async function createCompany(
         contactEmail?: string;
         contactPhone?: string;
     },
-    auditContext?: AuditLogContext
+    auditContext?: AuditLogContext,
 ) {
     const db = await getDb();
     const result = await db.collection("companies").insertOne({
@@ -29,9 +29,9 @@ export async function createCompany(
             metadata: {
                 companyName: companyData.name,
                 identifier: companyData.identifier,
-                description: `Company "${companyData.name}" created`
+                description: `Company "${companyData.name}" created`,
             },
-            context: auditContext
+            context: auditContext,
         });
     }
 
@@ -59,7 +59,7 @@ export async function createDSR(
         assignedTo?: string;
         dueDate?: Date;
     },
-    auditContext?: AuditLogContext
+    auditContext?: AuditLogContext,
 ) {
     const db = await getDb();
     const result = await db.collection("dsrs").insertOne({
@@ -78,12 +78,12 @@ export async function createDSR(
                 title: dsrData.title,
                 status: dsrData.status,
                 priority: dsrData.priority,
-                description: `DSR "${dsrData.title}" created`
+                description: `DSR "${dsrData.title}" created`,
             },
             context: {
                 ...auditContext,
-                companyId: dsrData.companyId
-            }
+                companyId: dsrData.companyId,
+            },
         });
     }
 
@@ -110,12 +110,14 @@ export async function updateDSR(
         assignedTo: string;
         dueDate: Date;
     }>,
-    auditContext?: AuditLogContext
+    auditContext?: AuditLogContext,
 ) {
     const db = await getDb();
 
     // Get the old values for audit trail
-    const oldDSR = await db.collection("dsrs").findOne({ _id: new ObjectId(id) });
+    const oldDSR = await db
+        .collection("dsrs")
+        .findOne({ _id: new ObjectId(id) });
 
     const result = await db.collection("dsrs").updateOne(
         { _id: new ObjectId(id) },
@@ -129,34 +131,37 @@ export async function updateDSR(
 
     // Log the DSR update
     if (auditContext && oldDSR) {
-        const changes = Object.keys(updateData).filter(key =>
-            oldDSR[key] !== updateData[key as keyof typeof updateData]
+        const changes = Object.keys(updateData).filter(
+            (key) => oldDSR[key] !== updateData[key as keyof typeof updateData],
         );
 
         await createAuditLog({
-            action: updateData.status && updateData.status !== oldDSR.status ? "DSR_STATUS_CHANGE" : "DSR_UPDATE",
+            action:
+                updateData.status && updateData.status !== oldDSR.status
+                    ? "DSR_STATUS_CHANGE"
+                    : "DSR_UPDATE",
             resourceType: "DSR_REQUEST",
             resourceId: id,
             metadata: {
                 oldValues: Object.fromEntries(
-                    changes.map(key => [key, oldDSR[key]])
+                    changes.map((key) => [key, oldDSR[key]]),
                 ),
                 newValues: updateData,
                 changes,
-                description: updateData.status && updateData.status !== oldDSR.status
-                    ? `DSR status changed from ${oldDSR.status} to ${updateData.status}`
-                    : `DSR updated`
+                description:
+                    updateData.status && updateData.status !== oldDSR.status
+                        ? `DSR status changed from ${oldDSR.status} to ${updateData.status}`
+                        : `DSR updated`,
             },
             context: {
                 ...auditContext,
-                companyId: oldDSR.companyId
-            }
+                companyId: oldDSR.companyId,
+            },
         });
     }
 
     return result;
 }
-
 
 export async function getUserByEmail(email: string) {
     const db = await getDb();

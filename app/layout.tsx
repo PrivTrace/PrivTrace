@@ -20,11 +20,19 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body className={clsx(
-                "min-h-screen bg-background font-sans antialiased",
-                inter.className,
-            )}>
-                <Providers themeProps={{ attribute: "class", defaultTheme: "system", enableSystem: true, }}>
+            <body
+                className={clsx(
+                    "min-h-screen bg-background font-sans antialiased",
+                    inter.className,
+                )}
+            >
+                <Providers
+                    themeProps={{
+                        attribute: "class",
+                        defaultTheme: "system",
+                        enableSystem: true,
+                    }}
+                >
                     {children}
                 </Providers>
             </body>

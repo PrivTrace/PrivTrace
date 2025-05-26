@@ -27,9 +27,7 @@ export const Providers = ({ children, themeProps }: ProvidersProps) => {
     return (
         <HeroUIProvider navigate={router.push}>
             <ToastProvider />
-            <NextThemesProvider {...themeProps}>
-                {children}
-            </NextThemesProvider>
+            <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
         </HeroUIProvider>
     );
 };

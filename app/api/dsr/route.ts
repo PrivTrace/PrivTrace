@@ -1,6 +1,10 @@
 import { createAuditLog, extractAuditContext } from "@/lib/audit-logger";
 import { auth } from "@/lib/auth";
-import { generateDSRConfirmationEmail, generateDSRNotificationEmail, sendEmail } from "@/lib/mail";
+import {
+    generateDSRConfirmationEmail,
+    generateDSRNotificationEmail,
+    sendEmail,
+} from "@/lib/mail";
 import { getDb } from "@/lib/mongodb";
 import type {
     CompanyDocument,
@@ -87,14 +91,14 @@ export async function POST(request: NextRequest) {
                 requesterEmail: body.requesterEmail,
                 requesterName: body.requesterName,
                 companyName: company.name,
-                description: `New DSR request created by ${body.requesterName} (${body.requestType})`
+                description: `New DSR request created by ${body.requesterName} (${body.requestType})`,
             },
             context: {
                 ...auditContext,
                 companyId: company._id,
                 userEmail: body.requesterEmail,
-                userName: body.requesterName
-            }
+                userName: body.requesterName,
+            },
         });
 
         // Send email notification to admin
@@ -118,7 +122,7 @@ export async function POST(request: NextRequest) {
                 details: body.details,
             },
             company.name,
-        )
+        );
 
         await sendEmail({
             to: company.adminEmail,

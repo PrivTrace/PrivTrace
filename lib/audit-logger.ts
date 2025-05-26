@@ -2,7 +2,7 @@ import type {
     AuditAction,
     AuditLogDocument,
     AuditMetadata,
-    ResourceType
+    ResourceType,
 } from "@/types/database";
 import { ObjectId } from "mongodb";
 import type { Session } from "./auth";
@@ -34,7 +34,7 @@ export async function createAuditLog({
     resourceType,
     resourceId,
     metadata = {},
-    context = {}
+    context = {},
 }: CreateAuditLogParams): Promise<ObjectId> {
     try {
         const db = await getDb();
@@ -45,16 +45,17 @@ export async function createAuditLog({
             userId: context.userId || context.session?.session.userId,
             userEmail: context.userEmail || context.session?.user?.email,
             userName: context.userName || context.session?.user?.name,
-            companyId: typeof context.companyId === "string"
-                ? new ObjectId(context.companyId)
-                : context.companyId,
+            companyId:
+                typeof context.companyId === "string"
+                    ? new ObjectId(context.companyId)
+                    : context.companyId,
             metadata: {
                 ...metadata,
-                severity: metadata.severity || getSeverityForAction(action)
+                severity: metadata.severity || getSeverityForAction(action),
             },
             ipAddress: context.ipAddress,
             userAgent: context.userAgent,
-            timestamp: new Date()
+            timestamp: new Date(),
         };
 
         const result = await db
@@ -72,26 +73,29 @@ export async function createAuditLog({
 /**
  * Retrieves audit logs with filtering and pagination
  */
-export async function getAuditLogs(options: {
-    companyId?: ObjectId | string;
-    userId?: string;
-    resourceType?: ResourceType;
-    action?: AuditAction;
-    startDate?: Date;
-    endDate?: Date;
-    limit?: number;
-    skip?: number;
-    sortBy?: "timestamp" | "action" | "resourceType";
-    sortOrder?: "asc" | "desc";
-} = {}) {
+export async function getAuditLogs(
+    options: {
+        companyId?: ObjectId | string;
+        userId?: string;
+        resourceType?: ResourceType;
+        action?: AuditAction;
+        startDate?: Date;
+        endDate?: Date;
+        limit?: number;
+        skip?: number;
+        sortBy?: "timestamp" | "action" | "resourceType";
+        sortOrder?: "asc" | "desc";
+    } = {},
+) {
     const db = await getDb();
 
     const filter: any = {};
 
     if (options.companyId) {
-        filter.companyId = typeof options.companyId === "string"
-            ? new ObjectId(options.companyId)
-            : options.companyId;
+        filter.companyId =
+            typeof options.companyId === "string"
+                ? new ObjectId(options.companyId)
+                : options.companyId;
     }
 
     if (options.userId) {
@@ -138,7 +142,7 @@ export async function getAuditLogs(options: {
     return {
         logs,
         total,
-        hasMore: (options.skip || 0) + logs.length < total
+        hasMore: (options.skip || 0) + logs.length < total,
     };
 }
 
@@ -151,7 +155,7 @@ export async function getResourceAuditLogs(
     options: {
         limit?: number;
         skip?: number;
-    } = {}
+    } = {},
 ) {
     return getAuditLogs({
         resourceType,
@@ -163,19 +167,21 @@ export async function getResourceAuditLogs(
 /**
  * Determines severity level based on action type
  */
-function getSeverityForAction(action: AuditAction): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
+function getSeverityForAction(
+    action: AuditAction,
+): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
     const criticalActions: AuditAction[] = [
         "COMPANY_DELETE",
         "DSR_DELETE",
         "ADMIN_ROLE_CHANGE",
-        "DATA_EXPORT"
+        "DATA_EXPORT",
     ];
 
     const highActions: AuditAction[] = [
         "USER_PASSWORD_CHANGE",
         "COMPANY_UPDATE",
         "DSR_STATUS_CHANGE",
-        "ADMIN_ACCESS_GRANTED"
+        "ADMIN_ACCESS_GRANTED",
     ];
 
     const mediumActions: AuditAction[] = [
@@ -183,7 +189,7 @@ function getSeverityForAction(action: AuditAction): "LOW" | "MEDIUM" | "HIGH" | 
         "DSR_CREATE",
         "DSR_UPDATE",
         "USER_REGISTER",
-        "DSR_NOTE_ADD"
+        "DSR_NOTE_ADD",
     ];
 
     if (criticalActions.includes(action)) return "CRITICAL";
@@ -198,17 +204,18 @@ function getSeverityForAction(action: AuditAction): "LOW" | "MEDIUM" | "HIGH" | 
  */
 export function extractAuditContext(
     request: Request,
-    session?: Session
+    session?: Session,
 ): AuditLogContext {
     const { headers } = request;
 
     return {
         session,
-        ipAddress: headers.get("x-forwarded-for") ||
+        ipAddress:
+            headers.get("x-forwarded-for") ||
             headers.get("x-real-ip") ||
             headers.get("cf-connecting-ip") ||
             "unknown",
-        userAgent: headers.get("user-agent") || "unknown"
+        userAgent: headers.get("user-agent") || "unknown",
     };
 }
 
@@ -217,7 +224,7 @@ export function extractAuditContext(
  */
 export async function auditedOperation<T>(
     operation: () => Promise<T>,
-    auditParams: CreateAuditLogParams
+    auditParams: CreateAuditLogParams,
 ): Promise<T> {
     try {
         const result = await operation();
@@ -230,8 +237,8 @@ export async function auditedOperation<T>(
             metadata: {
                 ...auditParams.metadata,
                 error: error instanceof Error ? error.message : "Unknown error",
-                success: false
-            }
+                success: false,
+            },
         });
         throw error;
     }
