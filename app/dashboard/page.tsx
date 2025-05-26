@@ -87,9 +87,9 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen ">
             {/* Header */}
-            <header className="bg-white shadow">
+            <header className="shadow">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center py-6">
                         <div>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center space-x-2">
-                                <div className="flex-1 p-3 bg-gray-50 rounded-md font-mono text-sm">
+                                <div className="flex-1 p-3 rounded-md font-mono text-sm">
                                     {companyInfo &&
                                         `${window.location.origin}/dsr/${companyInfo.dsrFormIdentifier}`}
                                 </div>
