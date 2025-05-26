@@ -1,4 +1,4 @@
-# Database Setup Guide
+# PrivTrace Database Setup Guide
 
 ## MongoDB with Docker
 
@@ -48,8 +48,8 @@ Access the database management interface at `http://localhost:8081`
 
 The MongoDB setup includes:
 
-- **Database Name:** `dsr_management`
-- **Application User:** `dsr_user` / `dsr_password123`
+- **Database Name:** `privtrace_management`
+- **Application User:** `privtrace_user` / `privtrace_password123`
 - **Admin User:** `admin` / `password123`
 
 ### Environment Variables
@@ -57,8 +57,8 @@ The MongoDB setup includes:
 The following environment variables are configured in `.env.local`:
 
 ```env
-MONGODB_URI=mongodb://dsr_user:dsr_password123@localhost:27017/dsr_management
-MONGODB_DB=dsr_management
+MONGODB_URI=mongodb://privtrace_user:privtrace_password123@localhost:27017/privtrace_management
+MONGODB_DB=privtrace_management
 ```
 
 ### Database Schema

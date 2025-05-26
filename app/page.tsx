@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -7,7 +6,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Shield, Users, FileText, Clock } from "lucide-react";
+import { Clock, FileText, Shield, Users } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
     return (
@@ -19,7 +19,7 @@ export default function HomePage() {
                         <div className="flex items-center">
                             <Shield className="h-8 w-8 text-primary mr-3" />
                             <h1 className="text-2xl font-bold text-foreground">
-                                DSR Manager
+                                PrivTrace
                             </h1>
                         </div>
                         <div className="space-x-4">

@@ -158,7 +158,7 @@ export default function DashboardPage() {
                     </Card>
                     <Card>
                         <CardHeader>
-                            <CardTitle>Data Subject Requests</CardTitle>
+                            <CardTitle>PrivTrace</CardTitle>
                             <CardDescription>
                                 Manage and track all DSR submissions from your
                                 customers

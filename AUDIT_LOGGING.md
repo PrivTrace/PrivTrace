@@ -1,8 +1,8 @@
-# Audit Logging System Implementation
+# PrivTrace
 
 ## Overview
 
-A comprehensive audit logging system has been implemented for the DSR Management SaaS application to track all significant user actions, system events, and data changes for compliance, security, and troubleshooting purposes.
+A comprehensive audit logging system has been implemented for the PrivTrace SaaS application to track all significant user actions, system events, and data changes for compliance, security, and troubleshooting purposes.
 
 ## Features Implemented
 
