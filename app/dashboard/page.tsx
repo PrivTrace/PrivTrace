@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/auth-client";
+import DSRTable from "@/components/dashboard/DSRTable";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -11,10 +9,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { authClient, useSession } from "@/lib/auth-client";
+import { Alert } from "@heroui/alert";
 import { Copy, ExternalLink, LogOut } from "lucide-react";
-import DSRTable from "@/components/dashboard/DSRTable";
-import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface CompanyInfo {
     name: string;
@@ -82,9 +81,7 @@ export default function DashboardPage() {
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Alert variant="destructive" className="max-w-md">
-                    <AlertDescription>{error}</AlertDescription>
-                </Alert>
+                <Alert variant="faded" color="danger" title="Error" description={error} />
             </div>
         );
     }

@@ -15,8 +15,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
+import { Alert } from "@heroui/alert";
 
 export default function LoginPage() {
     const [formData, setFormData] = useState({
@@ -67,9 +67,7 @@ export default function LoginPage() {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {error && (
-                            <Alert variant="destructive">
-                                <AlertDescription>{error}</AlertDescription>
-                            </Alert>
+                            <Alert variant="faded" color="danger" title="Error" description={error} />
                         )}
 
                         <div className="space-y-2">
