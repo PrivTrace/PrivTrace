@@ -29,7 +29,6 @@ PrivTrace is a privacy-focused application designed to handle Data Subject Reque
 ## Getting Started 🚀🛠️
 
 ```sh
-# Example setup commands
 bun install
 bun run dev --turbopack
 ```
