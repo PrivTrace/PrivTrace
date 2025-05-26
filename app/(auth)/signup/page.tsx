@@ -35,11 +35,7 @@ export default function SignUpPage() {
         if (!isPending && session) {
             router.push("/dashboard");
         }
-    }, [
-        session,
-        isPending,
-        router,
-    ])
+    }, [session, isPending, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -102,7 +98,12 @@ export default function SignUpPage() {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         {error && (
-                            <Alert variant="faded" color="danger" title="Error" description={error} />
+                            <Alert
+                                variant="faded"
+                                color="danger"
+                                title="Error"
+                                description={error}
+                            />
                         )}
 
                         <div className="space-y-2">

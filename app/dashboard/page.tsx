@@ -82,7 +82,12 @@ export default function DashboardPage() {
     if (error) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <Alert variant="faded" color="danger" title="Error" description={error} />
+                <Alert
+                    variant="faded"
+                    color="danger"
+                    title="Error"
+                    description={error}
+                />
             </div>
         );
     }
@@ -149,18 +154,18 @@ export default function DashboardPage() {
                             </div>
                         </CardContent>
                     </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Data Subject Requests</CardTitle>
-                                <CardDescription>
-                                    Manage and track all DSR submissions from your
-                                    customers
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <DSRTable />
-                            </CardContent>
-                        </Card>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Data Subject Requests</CardTitle>
+                            <CardDescription>
+                                Manage and track all DSR submissions from your
+                                customers
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <DSRTable />
+                        </CardContent>
+                    </Card>
                     {/* Audit Log */}
                     <AuditLogsTable />
 

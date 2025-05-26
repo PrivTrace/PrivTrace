@@ -358,7 +358,8 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                     <TableRow
                                         key={log._id || `log-${index}`}
                                         className="hover:bg-muted/50 transition-colors cursor-pointer"
-                                    ><TableCell className="text-sm whitespace-nowrap">
+                                    >
+                                        <TableCell className="text-sm whitespace-nowrap">
                                             <div className="font-medium">
                                                 {format(
                                                     new Date(log.timestamp),
@@ -427,8 +428,7 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                                     {log.metadata.description
                                                         ?.split(" ")
                                                         .slice(0, 3)
-                                                        .join(" ")}
-                                                    {" "}
+                                                        .join(" ")}{" "}
                                                 </span>
                                                 <span className="text-muted-foreground">
                                                     {log.metadata.description
@@ -449,14 +449,15 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                                 )}
                                                 className={`
                                                     transition-all shadow-sm group-hover:shadow
-                                                    ${log.metadata
-                                                        .severity ===
-                                                        "HIGH" ||
+                                                    ${
                                                         log.metadata
                                                             .severity ===
-                                                        "CRITICAL"
-                                                        ? "group-hover:animate-pulse"
-                                                        : ""
+                                                            "HIGH" ||
+                                                        log.metadata
+                                                            .severity ===
+                                                            "CRITICAL"
+                                                            ? "group-hover:animate-pulse"
+                                                            : ""
                                                     }
                                                 `}
                                             >
@@ -526,7 +527,8 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                         <>
                                             Load More
                                             <span className="ml-1">
-                                                ({total - logs.length} remaining)
+                                                ({total - logs.length}{" "}
+                                                remaining)
                                             </span>
                                             <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
                                         </>

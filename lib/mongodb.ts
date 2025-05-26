@@ -36,27 +36,33 @@ if (process.env.NODE_ENV === "development") {
 export async function getDb(): Promise<Db> {
     const client = await clientPromise;
     const db = client.db(dbName);
-    
+
     // Ensure indexes are created for optimal performance and searching
     try {
         // Create indexes only once - check if they exist first
         const collections = await db.listCollections().toArray();
-        const dsrRequestsExists = collections.some(c => c.name === 'dsrRequests');
-        
+        const dsrRequestsExists = collections.some(
+            (c) => c.name === "dsrRequests",
+        );
+
         if (dsrRequestsExists) {
-            const indexes = await db.collection('dsrRequests').indexes();
-            const hasEmailHashIndex = indexes.some(idx => idx.name === 'requesterEmailHash_1');
-            
+            const indexes = await db.collection("dsrRequests").indexes();
+            const hasEmailHashIndex = indexes.some(
+                (idx) => idx.name === "requesterEmailHash_1",
+            );
+
             if (!hasEmailHashIndex) {
                 // Create index on hashed email for efficient searches
-                await db.collection('dsrRequests').createIndex({ requesterEmailHash: 1 });
-                console.log('Created index on requesterEmailHash');
+                await db
+                    .collection("dsrRequests")
+                    .createIndex({ requesterEmailHash: 1 });
+                console.log("Created index on requesterEmailHash");
             }
         }
     } catch (err) {
-        console.error('Error setting up database indexes:', err);
+        console.error("Error setting up database indexes:", err);
     }
-    
+
     return db;
 }
 

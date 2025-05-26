@@ -1,6 +1,6 @@
 import { createAuditLog, extractAuditContext } from "@/lib/audit-logger";
 import { auth } from "@/lib/auth";
-import { encryptDSRData, decryptDSRData } from "@/lib/encryption";
+import { decryptDSRData, encryptDSRData } from "@/lib/encryption";
 import {
     generateDSRConfirmationEmail,
     generateDSRNotificationEmail,
@@ -199,7 +199,7 @@ export async function GET(request: NextRequest) {
         if (status) {
             query.status = status;
         }
-        
+
         // If searching by email, use the hash for security
         const searchEmail = searchParams.get("email");
         if (searchEmail) {
@@ -221,12 +221,12 @@ export async function GET(request: NextRequest) {
             .skip((page - 1) * limit)
             .limit(limit)
             .toArray();
-            
+
         // Decrypt the DSR data before sending to client
-        const dsrRequests = encryptedDsrRequests.map(dsr => {
+        const dsrRequests = encryptedDsrRequests.map((dsr) => {
             // Create a copy of the DSR object
             const decryptedDsr = { ...dsr };
-            
+
             // Only decrypt the sensitive fields
             const decrypted = decryptDSRData({
                 requesterEmail: dsr.requesterEmail,
@@ -234,13 +234,13 @@ export async function GET(request: NextRequest) {
                 requestType: dsr.requestType,
                 details: dsr.details,
             });
-            
+
             // Update with decrypted values
             decryptedDsr.requesterEmail = decrypted.requesterEmail;
             decryptedDsr.requesterName = decrypted.requesterName;
             decryptedDsr.requestType = decrypted.requestType as any;
             decryptedDsr.details = decrypted.details;
-            
+
             return decryptedDsr;
         });
 

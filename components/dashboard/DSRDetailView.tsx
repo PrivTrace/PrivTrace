@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "@heroui/input"
+import { Input } from "@heroui/input";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -158,7 +158,12 @@ export default function DSRDetailView({
                 </DialogHeader>
 
                 {error && (
-                    <Alert title="Error" description={error} variant="faded" color="danger" />
+                    <Alert
+                        title="Error"
+                        description={error}
+                        variant="faded"
+                        color="danger"
+                    />
                 )}
 
                 <div className="space-y-6">
@@ -183,7 +188,12 @@ export default function DSRDetailView({
                                 <Label className="text-sm font-medium text-gray-300">
                                     Request Type
                                 </Label>
-                                <Chip variant="bordered" radius="sm" size="sm" className="mt-1">
+                                <Chip
+                                    variant="bordered"
+                                    radius="sm"
+                                    size="sm"
+                                    className="mt-1"
+                                >
                                     {dsr.requestType.replace("_", " ")}
                                 </Chip>
                             </div>
@@ -226,7 +236,12 @@ export default function DSRDetailView({
                     {/* Request Details */}
                     {dsr.details && (
                         <div>
-                            <Input value={dsr.details} label="Additional Details" variant="bordered" isReadOnly />
+                            <Input
+                                value={dsr.details}
+                                label="Additional Details"
+                                variant="bordered"
+                                isReadOnly
+                            />
                         </div>
                     )}
 
@@ -247,7 +262,9 @@ export default function DSRDetailView({
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="NEW">New</SelectItem>
+                                            <SelectItem value="NEW">
+                                                New
+                                            </SelectItem>
                                             <SelectItem value="PENDING_VERIFICATION">
                                                 Pending Verification
                                             </SelectItem>

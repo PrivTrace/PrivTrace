@@ -64,7 +64,7 @@ export async function GET(
                 { status: 404 },
             );
         }
-        
+
         // Decrypt sensitive data
         const decrypted = decryptDSRData({
             requesterEmail: encryptedDsrRequest.requesterEmail,
@@ -72,9 +72,9 @@ export async function GET(
             requestType: encryptedDsrRequest.requestType,
             details: encryptedDsrRequest.details,
         });
-        
+
         // Create a copy with decrypted values
-        const dsrRequest = { 
+        const dsrRequest = {
             ...encryptedDsrRequest,
             requesterEmail: decrypted.requesterEmail,
             requesterName: decrypted.requesterName,

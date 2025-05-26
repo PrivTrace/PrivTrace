@@ -32,9 +32,13 @@ interface PaginationInfo {
     totalPages: number;
 }
 
-export default function DSRTable({ }: DSRTableProps) {
-    const [allDsrRequests, setAllDsrRequests] = useState<DSRRequestDocument[]>([]);
-    const [displayedDsrRequests, setDisplayedDsrRequests] = useState<DSRRequestDocument[]>([]);
+export default function DSRTable({}: DSRTableProps) {
+    const [allDsrRequests, setAllDsrRequests] = useState<DSRRequestDocument[]>(
+        [],
+    );
+    const [displayedDsrRequests, setDisplayedDsrRequests] = useState<
+        DSRRequestDocument[]
+    >([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [selectedDSR, setSelectedDSR] = useState<DSRRequestDocument | null>(
@@ -68,10 +72,10 @@ export default function DSRTable({ }: DSRTableProps) {
             setDisplayedDsrRequests(filtered.slice(startIndex, endIndex));
 
             // Update pagination based on filtered results
-            setPagination(prev => ({
+            setPagination((prev) => ({
                 ...prev,
                 total: filtered.length,
-                totalPages: Math.ceil(filtered.length / prev.limit)
+                totalPages: Math.ceil(filtered.length / prev.limit),
             }));
         }
     }, [filters.email, allDsrRequests, pagination.page, pagination.limit]);
@@ -80,8 +84,8 @@ export default function DSRTable({ }: DSRTableProps) {
         if (!email.trim()) return requests;
 
         const lowerEmail = email.toLowerCase();
-        return requests.filter(dsr =>
-            dsr.requesterEmail.toLowerCase().includes(lowerEmail)
+        return requests.filter((dsr) =>
+            dsr.requesterEmail.toLowerCase().includes(lowerEmail),
         );
     };
 
@@ -112,10 +116,10 @@ export default function DSRTable({ }: DSRTableProps) {
             setDisplayedDsrRequests(filtered.slice(0, pagination.limit));
 
             // Update pagination
-            setPagination(prev => ({
+            setPagination((prev) => ({
                 ...prev,
                 total: filtered.length,
-                totalPages: Math.ceil(filtered.length / prev.limit)
+                totalPages: Math.ceil(filtered.length / prev.limit),
             }));
         } catch (err) {
             setError("Failed to load DSR requests");
@@ -192,7 +196,7 @@ export default function DSRTable({ }: DSRTableProps) {
                             onChange={(e) => {
                                 setFilters((prev) => ({
                                     ...prev,
-                                    email: e.target.value
+                                    email: e.target.value,
                                 }));
                             }}
                         />
@@ -200,7 +204,10 @@ export default function DSRTable({ }: DSRTableProps) {
                             <button
                                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                                 onClick={() => {
-                                    setFilters((prev) => ({ ...prev, email: '' }));
+                                    setFilters((prev) => ({
+                                        ...prev,
+                                        email: "",
+                                    }));
                                 }}
                             >
                                 ✕

@@ -37,9 +37,7 @@ export default async function DSRPage({
         <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl mx-auto">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold">
-                        Data Subject Request
-                    </h1>
+                    <h1 className="text-3xl font-bold">Data Subject Request</h1>
                     <p className="mt-2 text-lg text-gray-300">
                         Submit a request to {companyInfo.name}
                     </p>
