@@ -1,4 +1,4 @@
-compo# DSR Form Data Encryption
+# DSR Form Data Encryption
 
 This document explains how sensitive data in the DSR (Data Subject Request) system is protected through encryption.
 
