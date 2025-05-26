@@ -15,10 +15,17 @@ if (!process.env.ENCRYPTION_IV || process.env.ENCRYPTION_IV.length < 16) {
 
 // Use environment variables or fallback (for development only)
 // In production, use only environment variables with proper key management
-const ENCRYPTION_KEY =
-    process.env.ENCRYPTION_KEY || "your-32-char-encryption-key-here-now";
-const ENCRYPTION_IV = process.env.ENCRYPTION_IV || "your-16-char-iv";
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 
+    crypto.randomBytes(32).toString('hex').slice(0, 32);
+const ENCRYPTION_IV = process.env.ENCRYPTION_IV || 
+    crypto.randomBytes(16).toString('hex').slice(0, 16);
 const ALGORITHM = "aes-256-cbc";
+
+// Important: In production, always use environment variables
+// These random values will change on server restart, making previously encrypted data unreadable
+if (!process.env.ENCRYPTION_KEY || !process.env.ENCRYPTION_IV) {
+    console.warn("Using randomly generated keys. ALL ENCRYPTED DATA WILL BE LOST ON SERVER RESTART.");
+}
 
 /**
  * Encrypts sensitive DSR data

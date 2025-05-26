@@ -467,8 +467,16 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                             </Chip>
                                         </TableCell>
                                         <TableCell className="text-sm">
-                                            <div className="font-mono text-xs bg-muted/30 px-2 py-1 rounded-md inline-block">
-                                                {log.ipAddress || "Unknown"}
+                                            <div
+                                                className="font-mono text-xs bg-muted/30 px-2 py-1 rounded-md inline-block cursor-help relative group"
+                                                title="IP Address"
+                                            >
+                                                <span className="group-hover:opacity-0 transition-opacity">
+                                                    ••••••••
+                                                </span>
+                                                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    {log.ipAddress || "Unknown"}
+                                                </span>
                                             </div>
                                             <div className="text-xs text-muted-foreground mt-1 flex items-center">
                                                 <svg
