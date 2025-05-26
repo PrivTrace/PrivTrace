@@ -48,16 +48,7 @@ export default function HomePage() {
                     <div className="space-x-4">
                         <Link href="/signup">
                             <Button size="lg" className="px-8 py-3">
-                                Start Free Trial
-                            </Button>
-                        </Link>
-                        <Link href="/demo">
-                            <Button
-                                variant="outline" 
-                                size="lg"
-                                className="px-8 py-3 border-primary/20 hover:border-primary/50"
-                            >
-                                View Demo
+                                Get Started For Free
                             </Button>
                         </Link>
                     </div>
