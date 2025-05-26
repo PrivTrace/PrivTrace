@@ -35,7 +35,6 @@ This project uses MongoDB as the database, running in a Docker container for eas
 - `npm run db:up` - Start MongoDB container
 - `npm run db:down` - Stop and remove containers
 - `npm run db:logs` - View MongoDB logs
-- `npm run db:ui` - Start Mongo Express (database UI)
 - `npm run db:reset` - Reset database (removes all data)
 
 #### Mongo Express UI
