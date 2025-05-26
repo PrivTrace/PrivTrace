@@ -29,7 +29,7 @@ export default function RootLayout({
                 <Providers
                     themeProps={{
                         attribute: "class",
-                        defaultTheme: "system",
+                        defaultTheme: "dark",
                         enableSystem: true,
                     }}
                 >
