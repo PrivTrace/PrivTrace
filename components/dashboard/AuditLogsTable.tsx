@@ -18,6 +18,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Chip } from "@heroui/chip";
+import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
@@ -51,82 +52,77 @@ interface AuditLogsTableProps {
 }
 
 export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
-    const [logs, setLogs] = useState<AuditLog[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
     const [filters, setFilters] = useState({
-        resourceType: "",
-        action: "",
+        resourceType: "ALL",
+        action: "ALL",
         startDate: "",
         endDate: "",
         limit: 50,
         skip: 0,
     });
+    const [logs, setLogs] = useState<AuditLog[]>([]); // for incremental loading
     const [total, setTotal] = useState(0);
     const [hasMore, setHasMore] = useState(false);
 
-    const fetchAuditLogs = async (newFilters = filters) => {
-        try {
-            setLoading(true);
-            setError(null);
-
+    // Query for audit logs
+    const {
+        data,
+        isLoading: loading,
+        isError,
+        error,
+        refetch,
+        isFetching,
+    } = useQuery<AuditLogsResponse, Error>({
+        queryKey: [
+            "auditLogs",
+            companyId,
+            filters.resourceType,
+            filters.action,
+            filters.startDate,
+            filters.endDate,
+            filters.limit,
+            filters.skip,
+        ],
+        queryFn: async () => {
             const params = new URLSearchParams();
             if (companyId) params.append("companyId", companyId);
-            if (newFilters.resourceType)
-                params.append("resourceType", newFilters.resourceType);
-            if (newFilters.action) params.append("action", newFilters.action);
-            if (newFilters.startDate)
-                params.append("startDate", newFilters.startDate);
-            if (newFilters.endDate)
-                params.append("endDate", newFilters.endDate);
-            params.append("limit", newFilters.limit.toString());
-            params.append("skip", newFilters.skip.toString());
+            if (filters.resourceType && filters.resourceType !== "ALL")
+                params.append("resourceType", filters.resourceType);
+            if (filters.action && filters.action !== "ALL")
+                params.append("action", filters.action);
+            if (filters.startDate) params.append("startDate", filters.startDate);
+            if (filters.endDate) params.append("endDate", filters.endDate);
+            params.append("limit", filters.limit.toString());
+            params.append("skip", filters.skip.toString());
             params.append("sortBy", "timestamp");
             params.append("sortOrder", "desc");
-
             const response = await fetch(`/api/audit-logs?${params}`);
-
             if (!response.ok) {
-                throw new Error(
-                    `Failed to fetch audit logs: ${response.statusText}`,
-                );
+                throw new Error(`Failed to fetch audit logs: ${response.statusText}`);
             }
+            return response.json() as Promise<AuditLogsResponse>;
+        },
+    });
 
-            const data: AuditLogsResponse = await response.json();
-
-            if (newFilters.skip === 0) {
-                setLogs(data.logs);
-            } else {
-                setLogs((prev) => [...prev, ...data.logs]);
-            }
-
-            setTotal(data.total);
-            setHasMore(data.hasMore);
-        } catch (err) {
-            setError(
-                err instanceof Error
-                    ? err.message
-                    : "Failed to fetch audit logs",
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
-
+    // Update logs, total, hasMore on data change
     useEffect(() => {
-        fetchAuditLogs();
-    }, [companyId]);
+        if (!data) return;
+        if (filters.skip === 0) {
+            setLogs(data.logs);
+        } else {
+            setLogs((prev) => [...prev, ...data.logs]);
+        }
+        setTotal(data.total);
+        setHasMore(data.hasMore);
+    }, [data, filters.skip]);
 
     const handleFilterChange = (key: string, value: string) => {
         const newFilters = { ...filters, [key]: value, skip: 0 };
         setFilters(newFilters);
-        fetchAuditLogs(newFilters);
     };
 
     const loadMore = () => {
-        const newFilters = { ...filters, skip: logs.length };
-        setFilters(newFilters);
-        fetchAuditLogs(newFilters);
+        setFilters((prev) => ({ ...prev, skip: logs.length }));
     };
 
     const getSeverityColor = (severity?: string) => {
@@ -166,14 +162,19 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
         return browser.length > 30 ? browser.substring(0, 30) + "..." : browser;
     };
 
-    if (error) {
+    if (isError) {
         return (
             <Card>
                 <CardHeader>
                     <CardTitle>Audit Logs</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="text-red-600">Error: {error}</div>
+                    <div className="text-red-600">
+                        Error: {error?.message || "Failed to load audit logs"}
+                    </div>
+                    <Button onClick={() => refetch()} className="mt-2">
+                        Try Again
+                    </Button>
                 </CardContent>
             </Card>
         );
@@ -449,15 +450,14 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                                 )}
                                                 className={`
                                                     transition-all shadow-sm group-hover:shadow
-                                                    ${
+                                                    ${log.metadata
+                                                        .severity ===
+                                                        "HIGH" ||
                                                         log.metadata
                                                             .severity ===
-                                                            "HIGH" ||
-                                                        log.metadata
-                                                            .severity ===
-                                                            "CRITICAL"
-                                                            ? "group-hover:animate-pulse"
-                                                            : ""
+                                                        "CRITICAL"
+                                                        ? "group-hover:animate-pulse"
+                                                        : ""
                                                     }
                                                 `}
                                             >

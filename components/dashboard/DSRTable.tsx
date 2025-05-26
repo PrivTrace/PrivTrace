@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import type { DSRRequestDocument } from "@/types/database";
 import { Chip } from "@heroui/chip";
+import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import DSRDetailView from "./DSRDetailView";
@@ -33,100 +34,73 @@ interface PaginationInfo {
 }
 
 export default function DSRTable({ }: DSRTableProps) {
-    const [allDsrRequests, setAllDsrRequests] = useState<DSRRequestDocument[]>(
-        [],
-    );
-    const [displayedDsrRequests, setDisplayedDsrRequests] = useState<
-        DSRRequestDocument[]
-    >([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-    const [selectedDSR, setSelectedDSR] = useState<DSRRequestDocument | null>(
-        null,
-    );
-    const [pagination, setPagination] = useState<PaginationInfo>({
-        page: 1,
-        limit: 10,
-        total: 0,
-        totalPages: 0,
-    });
     const [filters, setFilters] = useState({
         status: "ALL",
         sortBy: "createdAt",
         sortOrder: "desc",
         email: "",
     });
+    const [pagination, setPagination] = useState<PaginationInfo>({
+        page: 1,
+        limit: 10,
+        total: 0,
+        totalPages: 0,
+    });
+    const [selectedDSR, setSelectedDSR] = useState<DSRRequestDocument | null>(
+        null,
+    );
 
-    useEffect(() => {
-        fetchDSRRequests();
-    }, [pagination.page, filters.status, filters.sortBy, filters.sortOrder]);
-
-    useEffect(() => {
-        // Client-side filtering for email
-        if (allDsrRequests.length > 0) {
-            const filtered = filterByEmail(allDsrRequests, filters.email);
-
-            const startIndex = (pagination.page - 1) * pagination.limit;
-            const endIndex = startIndex + pagination.limit;
-
-            setDisplayedDsrRequests(filtered.slice(startIndex, endIndex));
-
-            // Update pagination based on filtered results
-            setPagination((prev) => ({
-                ...prev,
-                total: filtered.length,
-                totalPages: Math.ceil(filtered.length / prev.limit),
-            }));
-        }
-    }, [filters.email, allDsrRequests, pagination.page, pagination.limit]);
-
-    const filterByEmail = (requests: DSRRequestDocument[], email: string) => {
-        if (!email.trim()) return requests;
-
-        const lowerEmail = email.toLowerCase();
-        return requests.filter((dsr) =>
-            dsr.requesterEmail.toLowerCase().includes(lowerEmail),
-        );
-    };
-
-    const fetchDSRRequests = async () => {
-        setLoading(true);
-        try {
+    // Fetch DSR requests with useQuery
+    const {
+        data: allDsrRequests = [],
+        isLoading: loading,
+        isError,
+        error,
+        refetch,
+    } = useQuery<DSRRequestDocument[], Error>({
+        queryKey: [
+            "dsrRequests",
+            filters.status,
+            filters.sortBy,
+            filters.sortOrder,
+        ],
+        queryFn: async () => {
             const params = new URLSearchParams({
-                page: "1", // Get all records for client-side filtering
-                limit: "1000", // Use a large limit to get all records
+                page: "1",
+                limit: "1000",
                 sortBy: filters.sortBy,
                 sortOrder: filters.sortOrder,
             });
-
             if (filters.status && filters.status !== "ALL") {
                 params.append("status", filters.status);
             }
-
             const response = await fetch(`/api/dsr?${params}`);
             if (!response.ok) {
                 throw new Error("Failed to fetch DSR requests");
             }
-
             const data = await response.json();
-            setAllDsrRequests(data.dsrRequests);
+            return data.dsrRequests;
+        },
+    });
 
-            // Initial filtering
-            const filtered = filterByEmail(data.dsrRequests, filters.email);
-            setDisplayedDsrRequests(filtered.slice(0, pagination.limit));
+    // Client-side filtering for email and pagination
+    const filteredRequests = filters.email.trim()
+        ? allDsrRequests.filter((dsr: DSRRequestDocument) =>
+            dsr.requesterEmail.toLowerCase().includes(filters.email.toLowerCase())
+        )
+        : allDsrRequests;
+    const startIndex = (pagination.page - 1) * pagination.limit;
+    const endIndex = startIndex + pagination.limit;
+    const displayedDsrRequests = filteredRequests.slice(startIndex, endIndex);
 
-            // Update pagination
-            setPagination((prev) => ({
-                ...prev,
-                total: filtered.length,
-                totalPages: Math.ceil(filtered.length / prev.limit),
-            }));
-        } catch (err) {
-            setError("Failed to load DSR requests");
-        } finally {
-            setLoading(false);
-        }
-    };
+    // Update pagination info when filteredRequests or pagination changes
+    useEffect(() => {
+        setPagination((prev) => ({
+            ...prev,
+            total: filteredRequests.length,
+            totalPages: Math.ceil(filteredRequests.length / prev.limit),
+        }));
+    }, [filteredRequests.length, pagination.limit]);
 
     const getStatusChip = (status: string) => {
         const statusConfig = {
@@ -170,11 +144,11 @@ export default function DSRTable({ }: DSRTableProps) {
         );
     }
 
-    if (error) {
+    if (isError) {
         return (
             <div className="text-center py-8">
-                <p className="text-red-600">{error}</p>
-                <Button onClick={fetchDSRRequests} className="mt-2">
+                <p className="text-red-600">{(error as Error)?.message || "Failed to load DSR requests"}</p>
+                <Button onClick={() => refetch()} className="mt-2">
                     Try Again
                 </Button>
             </div>
@@ -285,15 +259,12 @@ export default function DSRTable({ }: DSRTableProps) {
                         <TableBody>
                             {displayedDsrRequests.length === 0 ? (
                                 <TableRow>
-                                    <TableCell
-                                        colSpan={5}
-                                        className="text-center py-8 text-gray-300"
-                                    >
+                                    <TableCell colSpan={5} className="text-center py-8 text-gray-300">
                                         No DSR requests found
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                displayedDsrRequests.map((dsr) => (
+                                displayedDsrRequests.map((dsr: DSRRequestDocument) => (
                                     <TableRow key={dsr._id.toString()}>
                                         <TableCell>
                                             <div>
@@ -307,9 +278,7 @@ export default function DSRTable({ }: DSRTableProps) {
                                         </TableCell>
                                         <TableCell>
                                             <Chip variant="solid" radius="sm" size="sm" color="primary">
-                                                {dsr.requestType.split('_')
-                                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                                                    .join(' ')}
+                                                {dsr.requestType.split('_').map((word: string) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}
                                             </Chip>
                                         </TableCell>
                                         <TableCell>
@@ -385,7 +354,7 @@ export default function DSRTable({ }: DSRTableProps) {
                 <DSRDetailView
                     dsr={selectedDSR}
                     onClose={() => setSelectedDSR(null)}
-                    onUpdate={fetchDSRRequests}
+                    onUpdate={refetch}
                 />
             )}
         </>
