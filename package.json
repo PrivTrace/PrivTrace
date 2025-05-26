@@ -10,7 +10,6 @@
         "db:up": "docker-compose up -d mongodb",
         "db:down": "docker-compose down",
         "db:logs": "docker-compose logs -f mongodb",
-        "db:ui": "docker-compose up -d mongo-express",
         "db:reset": "docker-compose down -v && docker-compose up -d mongodb"
     },
     "dependencies": {
