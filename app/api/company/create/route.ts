@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         };
 
         const result = await db
-            .collection<CompanyDocument>("companies")
+            .collection<Omit<CompanyDocument, "_id">>("companies")
             .insertOne(company);
 
         return NextResponse.json({
