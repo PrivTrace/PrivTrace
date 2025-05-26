@@ -76,10 +76,10 @@ export default function DSRForm({ companyIdentifier }: DSRFormProps) {
                 <CardContent className="pt-6">
                     <div className="text-center">
                         <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        <h3 className="text-lg font-medium mb-2">
                             Request Submitted Successfully
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-300">
                             Your data subject request has been submitted. You
                             will receive a confirmation email shortly, and the
                             company will process your request according to

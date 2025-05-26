@@ -157,41 +157,6 @@ export async function updateDSR(
     return result;
 }
 
-// User operations
-export async function createUser(
-    userData: {
-        email: string;
-        name: string;
-        role?: "admin" | "user";
-    },
-    auditContext?: AuditLogContext
-) {
-    const db = await getDb();
-    const result = await db.collection("users").insertOne({
-        ...userData,
-        role: userData.role || "user",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-    });
-
-    // Log the user creation
-    if (auditContext) {
-        await createAuditLog({
-            action: "USER_REGISTER",
-            resourceType: "USER",
-            resourceId: result.insertedId,
-            metadata: {
-                userEmail: userData.email,
-                userName: userData.name,
-                role: userData.role || "user",
-                description: `User "${userData.name}" registered`
-            },
-            context: auditContext
-        });
-    }
-
-    return result;
-}
 
 export async function getUserByEmail(email: string) {
     const db = await getDb();

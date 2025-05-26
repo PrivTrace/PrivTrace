@@ -243,7 +243,7 @@ export default function DSRDetailView({
                                 <Label htmlFor="status">Status</Label>
                                 <Select
                                     value={status}
-                                    onValueChange={setStatus}
+                                    onValueChange={setStatus as any}
                                 >
                                     <SelectTrigger>
                                         <SelectValue />

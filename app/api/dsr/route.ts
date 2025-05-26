@@ -1,6 +1,6 @@
 import { createAuditLog, extractAuditContext } from "@/lib/audit-logger";
 import { auth } from "@/lib/auth";
-import { generateDSRNotificationEmail, sendEmail } from "@/lib/mail";
+import { generateDSRConfirmationEmail, generateDSRNotificationEmail, sendEmail } from "@/lib/mail";
 import { getDb } from "@/lib/mongodb";
 import type {
     CompanyDocument,
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
 
         // Send email notification to admin
         const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`;
-        const emailContent = generateDSRNotificationEmail(
+        const adminEmailContent = generateDSRNotificationEmail(
             {
                 requesterName: body.requesterName,
                 requesterEmail: body.requesterEmail,
@@ -110,10 +110,26 @@ export async function POST(request: NextRequest) {
             dashboardUrl,
         );
 
+        const customerEmailContent = generateDSRConfirmationEmail(
+            {
+                requesterName: body.requesterName,
+                requesterEmail: body.requesterEmail,
+                requestType: body.requestType,
+                details: body.details,
+            },
+            company.name,
+        )
+
         await sendEmail({
             to: company.adminEmail,
-            subject: emailContent.subject,
-            html: emailContent.html,
+            subject: adminEmailContent.subject,
+            html: adminEmailContent.html,
+        });
+
+        await sendEmail({
+            to: body.requesterEmail,
+            subject: customerEmailContent.subject,
+            html: customerEmailContent.html,
         });
 
         return NextResponse.json({
