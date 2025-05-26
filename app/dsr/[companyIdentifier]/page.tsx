@@ -2,6 +2,8 @@ import DSRForm from "@/components/forms/DSRForm";
 import { notFound } from "next/navigation";
 
 async function getCompanyInfo(companyIdentifier: string) {
+    console.log(process.env)
+    console.log(`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/company/form-info/${companyIdentifier}`,)
     try {
         const response = await fetch(
             `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/company/form-info/${companyIdentifier}`,
