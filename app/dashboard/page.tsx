@@ -1,7 +1,8 @@
 "use client";
 
-import DSRTable from "@/components/dashboard/DSRTable";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -10,10 +11,10 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { authClient, useSession } from "@/lib/auth-client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Copy, ExternalLink, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import DSRTable from "@/components/dashboard/DSRTable";
+import { authClient } from "@/lib/auth-client";
 
 interface CompanyInfo {
     name: string;
@@ -71,8 +72,8 @@ export default function DashboardPage() {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                    <p className="mt-2 text-muted-foreground">Loading...</p>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-2 text-gray-600">Loading...</p>
                 </div>
             </div>
         );
@@ -89,18 +90,16 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-gray-50">
             {/* Header */}
-            <header className="bg-card shadow">
+            <header className="bg-white shadow">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center py-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-foreground">
+                            <h1 className="text-3xl font-bold text-gray-900">
                                 DSR Dashboard
                             </h1>
-                            <p className="text-muted-foreground">
-                                {companyInfo?.name}
-                            </p>
+                            <p className="text-gray-600">{companyInfo?.name}</p>
                         </div>
                         <Button onClick={handleSignOut} variant="outline">
                             <LogOut className="h-4 w-4 mr-2" />
@@ -124,7 +123,7 @@ export default function DashboardPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center space-x-2">
-                                <div className="flex-1 p-3 bg-muted rounded-md font-mono text-sm text-muted-foreground">
+                                <div className="flex-1 p-3 bg-gray-50 rounded-md font-mono text-sm">
                                     {companyInfo &&
                                         `${window.location.origin}/dsr/${companyInfo.dsrFormIdentifier}`}
                                 </div>
@@ -148,33 +147,6 @@ export default function DashboardPage() {
                                     size="sm"
                                 >
                                     <ExternalLink className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Audit Logs Card */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Audit Logs</CardTitle>
-                            <CardDescription>
-                                View detailed logs of all system activity and
-                                changes
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex items-center justify-between">
-                                <div className="text-sm text-muted-foreground">
-                                    Track user logins, DSR changes, and system
-                                    events
-                                </div>
-                                <Button
-                                    onClick={() =>
-                                        router.push("/dashboard/audit-logs")
-                                    }
-                                    variant="outline"
-                                >
-                                    View Audit Logs
                                 </Button>
                             </div>
                         </CardContent>

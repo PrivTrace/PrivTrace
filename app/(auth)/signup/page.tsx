@@ -2,8 +2,12 @@
 
 import type React from "react";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Card,
     CardContent,
@@ -11,12 +15,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth-client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 export default function SignUpPage() {
     const [formData, setFormData] = useState({
@@ -77,7 +77,7 @@ export default function SignUpPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold text-center">
@@ -174,11 +174,11 @@ export default function SignUpPage() {
                     </form>
 
                     <div className="mt-6 text-center">
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-gray-600">
                             Already have an account?{" "}
                             <Link
                                 href="/login"
-                                className="font-medium text-primary hover:text-primary/80"
+                                className="font-medium text-blue-600 hover:text-blue-500"
                             >
                                 Sign in
                             </Link>

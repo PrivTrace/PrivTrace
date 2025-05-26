@@ -181,7 +181,6 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
 
     return (
         <Card>
-            {" "}
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <CardTitle className="text-2xl font-bold">
@@ -355,13 +354,11 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {logs.map((log) => (
+                                {logs.map((log, index) => (
                                     <TableRow
-                                        key={log._id}
+                                        key={log._id || `log-${index}`}
                                         className="hover:bg-muted/50 transition-colors cursor-pointer"
-                                    >
-                                        {" "}
-                                        <TableCell className="text-sm whitespace-nowrap">
+                                    ><TableCell className="text-sm whitespace-nowrap">
                                             <div className="font-medium">
                                                 {format(
                                                     new Date(log.timestamp),
@@ -431,7 +428,8 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                                         ?.split(" ")
                                                         .slice(0, 3)
                                                         .join(" ")}
-                                                </span>{" "}
+                                                    {" "}
+                                                </span>
                                                 <span className="text-muted-foreground">
                                                     {log.metadata.description
                                                         ?.split(" ")
@@ -451,15 +449,14 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                                 )}
                                                 className={`
                                                     transition-all shadow-sm group-hover:shadow
-                                                    ${
+                                                    ${log.metadata
+                                                        .severity ===
+                                                        "HIGH" ||
                                                         log.metadata
                                                             .severity ===
-                                                            "HIGH" ||
-                                                        log.metadata
-                                                            .severity ===
-                                                            "CRITICAL"
-                                                            ? "group-hover:animate-pulse"
-                                                            : ""
+                                                        "CRITICAL"
+                                                        ? "group-hover:animate-pulse"
+                                                        : ""
                                                     }
                                                 `}
                                             >
@@ -467,7 +464,7 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                                     "CRITICAL" && "⚠️ "}
                                                 {log.metadata.severity || "LOW"}
                                             </Chip>
-                                        </TableCell>{" "}
+                                        </TableCell>
                                         <TableCell className="text-sm">
                                             <div className="font-mono text-xs bg-muted/30 px-2 py-1 rounded-md inline-block">
                                                 {log.ipAddress || "Unknown"}
@@ -493,7 +490,7 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                     </TableRow>
                                 ))}
                             </TableBody>
-                        </Table>{" "}
+                        </Table>
                         {hasMore && (
                             <div className="text-center mt-6">
                                 <Button
@@ -529,8 +526,7 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                         <>
                                             Load More
                                             <span className="ml-1">
-                                                ({total - logs.length}{" "}
-                                                remaining)
+                                                ({total - logs.length} remaining)
                                             </span>
                                             <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
                                         </>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -6,19 +7,18 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Clock, FileText, Shield, Users } from "lucide-react";
-import Link from "next/link";
+import { Shield, Users, FileText, Clock } from "lucide-react";
 
 export default function HomePage() {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background to-muted/80">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             {/* Header */}
-            <header className="bg-card shadow-sm">
+            <header className="bg-white shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center py-6">
                         <div className="flex items-center">
-                            <Shield className="h-8 w-8 text-primary mr-3" />
-                            <h1 className="text-2xl font-bold text-foreground">
+                            <Shield className="h-8 w-8 text-blue-600 mr-3" />
+                            <h1 className="text-2xl font-bold text-gray-900">
                                 DSR Manager
                             </h1>
                         </div>
@@ -37,10 +37,10 @@ export default function HomePage() {
             {/* Hero Section */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl font-bold text-foreground mb-4">
+                    <h2 className="text-4xl font-bold text-gray-900 mb-4">
                         Simplify Data Subject Request Management
                     </h2>
-                    <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+                    <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
                         Streamline GDPR and CCPA compliance with our easy-to-use
                         DSR management platform. Handle data access, deletion,
                         and correction requests efficiently.
@@ -55,7 +55,7 @@ export default function HomePage() {
                             <Button
                                 variant="outline"
                                 size="lg"
-                                className="px-8 py-3 border-primary/20 hover:border-primary/50"
+                                className="px-8 py-3"
                             >
                                 View Demo
                             </Button>
@@ -65,9 +65,9 @@ export default function HomePage() {
 
                 {/* Features */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                    <Card className="border border-border/50 hover:border-border transition-colors">
+                    <Card>
                         <CardHeader>
-                            <FileText className="h-8 w-8 text-primary mb-2" />
+                            <FileText className="h-8 w-8 text-blue-600 mb-2" />
                             <CardTitle>Easy Form Creation</CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -80,7 +80,7 @@ export default function HomePage() {
 
                     <Card>
                         <CardHeader>
-                            <Users className="h-8 w-8 text-primary mb-2" />
+                            <Users className="h-8 w-8 text-green-600 mb-2" />
                             <CardTitle>Customer Self-Service</CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -93,7 +93,7 @@ export default function HomePage() {
 
                     <Card>
                         <CardHeader>
-                            <Clock className="h-8 w-8 text-primary mb-2" />
+                            <Clock className="h-8 w-8 text-orange-600 mb-2" />
                             <CardTitle>Request Tracking</CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -106,7 +106,7 @@ export default function HomePage() {
 
                     <Card>
                         <CardHeader>
-                            <Shield className="h-8 w-8 text-primary mb-2" />
+                            <Shield className="h-8 w-8 text-purple-600 mb-2" />
                             <CardTitle>Compliance Ready</CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -120,48 +120,48 @@ export default function HomePage() {
 
                 {/* How it Works */}
                 <div className="text-center mb-16">
-                    <h3 className="text-3xl font-bold text-foreground mb-8">
+                    <h3 className="text-3xl font-bold text-gray-900 mb-8">
                         How It Works
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="text-center">
-                            <div className="bg-accent rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <span className="text-2xl font-bold text-accent-foreground">
+                            <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <span className="text-2xl font-bold text-blue-600">
                                     1
                                 </span>
                             </div>
                             <h4 className="text-xl font-semibold mb-2">
                                 Sign Up & Setup
                             </h4>
-                            <p className="text-muted-foreground">
+                            <p className="text-gray-600">
                                 Create your account and get your unique DSR form
                                 link instantly.
                             </p>
                         </div>
                         <div className="text-center">
-                            <div className="bg-accent rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <span className="text-2xl font-bold text-accent-foreground">
+                            <div className="bg-green-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <span className="text-2xl font-bold text-green-600">
                                     2
                                 </span>
                             </div>
                             <h4 className="text-xl font-semibold mb-2">
                                 Share Your Form
                             </h4>
-                            <p className="text-muted-foreground">
+                            <p className="text-gray-600">
                                 Add the form link to your website or share it
                                 with customers.
                             </p>
                         </div>
                         <div className="text-center">
-                            <div className="bg-accent rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                                <span className="text-2xl font-bold text-accent-foreground">
+                            <div className="bg-purple-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <span className="text-2xl font-bold text-purple-600">
                                     3
                                 </span>
                             </div>
                             <h4 className="text-xl font-semibold mb-2">
                                 Manage Requests
                             </h4>
-                            <p className="text-muted-foreground">
+                            <p className="text-gray-600">
                                 Receive notifications and manage all requests
                                 from your dashboard.
                             </p>
@@ -170,11 +170,11 @@ export default function HomePage() {
                 </div>
 
                 {/* CTA Section */}
-                <div className="bg-card rounded-lg shadow-lg p-8 text-center">
-                    <h3 className="text-2xl font-bold text-card-foreground mb-4">
+                <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
                         Ready to Streamline Your DSR Process?
                     </h3>
-                    <p className="text-muted-foreground mb-6">
+                    <p className="text-gray-600 mb-6">
                         Join hundreds of businesses already using DSR Manager to
                         handle their data subject requests.
                     </p>
@@ -187,7 +187,7 @@ export default function HomePage() {
             </main>
 
             {/* Footer */}
-            <footer className="bg-muted text-muted-foreground py-8 mt-16">
+            <footer className="bg-gray-900 text-white py-8 mt-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <div className="flex items-center justify-center mb-4">
@@ -196,8 +196,8 @@ export default function HomePage() {
                                 DSR Manager
                             </span>
                         </div>
-                        <p className="text-muted-foreground">
-                            © 2025 DSR Manager. All rights reserved.
+                        <p className="text-gray-400">
+                            © 2024 DSR Manager. All rights reserved.
                         </p>
                     </div>
                 </div>

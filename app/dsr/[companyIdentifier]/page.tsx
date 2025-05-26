@@ -34,16 +34,16 @@ export default async function DSRPage({
     }
 
     return (
-        <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl mx-auto">
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold text-foreground">
+                    <h1 className="text-3xl font-bold text-gray-900">
                         Data Subject Request
                     </h1>
-                    <p className="mt-2 text-lg text-muted-foreground">
+                    <p className="mt-2 text-lg text-gray-600">
                         Submit a request to {companyInfo.name}
                     </p>
-                    <p className="mt-4 text-sm text-muted-foreground/80">
+                    <p className="mt-4 text-sm text-gray-500">
                         Use this form to request access to, correction of, or
                         deletion of your personal data in accordance with
                         applicable privacy regulations.
