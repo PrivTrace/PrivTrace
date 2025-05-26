@@ -1,12 +1,13 @@
+"use client"
+
 import DSRForm from "@/components/forms/DSRForm";
-import { notFound } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { notFound, useParams } from "next/navigation";
 
 async function getCompanyInfo(companyIdentifier: string) {
-    console.log(process.env)
-    console.log(`https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/company/form-info/${companyIdentifier}`,)
     try {
         const response = await fetch(
-            `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/company/form-info/${companyIdentifier}`,
+            `/api/company/form-info/${companyIdentifier}`,
             {
                 cache: "no-store",
             },
@@ -23,13 +24,19 @@ async function getCompanyInfo(companyIdentifier: string) {
     }
 }
 
-export default async function DSRPage({
-    params,
-}: {
-    params: Promise<{ companyIdentifier: string }>;
-}) {
-    const { companyIdentifier } = await params;
-    const companyInfo = await getCompanyInfo(companyIdentifier);
+export default function DSRPage() {
+    const { companyIdentifier } = useParams();
+    if (!companyIdentifier) {
+        notFound();
+    }
+    const { data: companyInfo, isLoading } = useQuery({
+        queryKey: ['companyInfo', companyIdentifier],
+        queryFn: () => getCompanyInfo(companyIdentifier as string),
+    });
+    
+    if (isLoading) {
+        return <div>Loading company information...</div>;
+    }
 
     if (!companyInfo) {
         console.log("Company info not found for identifier:", companyIdentifier);
@@ -51,7 +58,7 @@ export default async function DSRPage({
                     </p>
                 </div>
 
-                <DSRForm companyIdentifier={companyIdentifier} />
+                <DSRForm companyIdentifier={companyIdentifier as string} />
             </div>
         </div>
     );
