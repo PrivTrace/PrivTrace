@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -19,6 +18,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import type { DSRRequestDocument } from "@/types/database";
+import { Chip } from "@heroui/chip";
 import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import DSRDetailView from "./DSRDetailView";
@@ -32,7 +32,7 @@ interface PaginationInfo {
     totalPages: number;
 }
 
-export default function DSRTable({}: DSRTableProps) {
+export default function DSRTable({ }: DSRTableProps) {
     const [allDsrRequests, setAllDsrRequests] = useState<DSRRequestDocument[]>(
         [],
     );
@@ -128,23 +128,23 @@ export default function DSRTable({}: DSRTableProps) {
         }
     };
 
-    const getStatusBadge = (status: string) => {
+    const getStatusChip = (status: string) => {
         const statusConfig = {
-            NEW: { variant: "default" as const, label: "New" },
+            NEW: { color: "primary" as const, label: "New" },
             PENDING_VERIFICATION: {
-                variant: "secondary" as const,
+                color: "secondary" as const,
                 label: "Pending Verification",
             },
-            IN_PROGRESS: { variant: "default" as const, label: "In Progress" },
-            COMPLETED: { variant: "default" as const, label: "Completed" },
-            REJECTED: { variant: "destructive" as const, label: "Rejected" },
-            CANCELLED: { variant: "secondary" as const, label: "Cancelled" },
+            IN_PROGRESS: { color: "primary" as const, label: "In Progress" },
+            COMPLETED: { color: "primary" as const, label: "Completed" },
+            REJECTED: { color: "danger" as const, label: "Rejected" },
+            CANCELLED: { color: "secondary" as const, label: "Cancelled" },
         };
 
         const config =
             statusConfig[status as keyof typeof statusConfig] ||
             statusConfig.NEW;
-        return <Badge variant={config.variant}>{config.label}</Badge>;
+        return <Chip variant="solid" radius="sm" size="sm" color="success">{config.label}</Chip>;
     };
 
     const formatDate = (date: string | Date) => {
@@ -287,7 +287,7 @@ export default function DSRTable({}: DSRTableProps) {
                                 <TableRow>
                                     <TableCell
                                         colSpan={5}
-                                        className="text-center py-8 text-gray-500"
+                                        className="text-center py-8 text-gray-300"
                                     >
                                         No DSR requests found
                                     </TableCell>
@@ -300,23 +300,22 @@ export default function DSRTable({}: DSRTableProps) {
                                                 <div className="font-medium">
                                                     {dsr.requesterName}
                                                 </div>
-                                                <div className="text-sm text-gray-500">
+                                                <div className="text-sm text-gray-300">
                                                     {dsr.requesterEmail}
                                                 </div>
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline">
-                                                {dsr.requestType.replace(
-                                                    "_",
-                                                    " ",
-                                                )}
-                                            </Badge>
+                                            <Chip variant="solid" radius="sm" size="sm" color="primary">
+                                                {dsr.requestType.split('_')
+                                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                                    .join(' ')}
+                                            </Chip>
                                         </TableCell>
                                         <TableCell>
-                                            {getStatusBadge(dsr.status)}
+                                            {getStatusChip(dsr.status)}
                                         </TableCell>
-                                        <TableCell className="text-sm text-gray-500">
+                                        <TableCell className="text-sm text-gray-300">
                                             {formatDate(dsr.createdAt)}
                                         </TableCell>
                                         <TableCell>

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { authClient, useSession } from "@/lib/auth-client";
 import { Alert } from "@heroui/alert";
+import { Input } from "@heroui/input";
 import { Copy, ExternalLink, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -126,10 +127,11 @@ export default function DashboardPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center space-x-2">
-                                <div className="flex-1 p-3 rounded-md font-mono text-sm">
-                                    {companyInfo &&
-                                        `${window.location.origin}/dsr/${companyInfo.dsrFormIdentifier}`}
-                                </div>
+                                <Input isReadOnly color="primary" radius="sm" variant="bordered" value={
+                                    companyInfo
+                                        ? `${window.location.origin}/dsr/${companyInfo.dsrFormIdentifier}`
+                                        : ""
+                                } />
                                 <Button
                                     onClick={copyFormLink}
                                     variant="outline"
