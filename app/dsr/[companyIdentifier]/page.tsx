@@ -30,6 +30,7 @@ export default async function DSRPage({
     const companyInfo = await getCompanyInfo(companyIdentifier);
 
     if (!companyInfo) {
+        console.log("Company info not found for identifier:", companyIdentifier);
         notFound();
     }
 
