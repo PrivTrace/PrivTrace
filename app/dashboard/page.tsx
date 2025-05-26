@@ -71,8 +71,8 @@ export default function DashboardPage() {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-2 text-gray-600">Loading...</p>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-2 text-muted-foreground">Loading...</p>
                 </div>
             </div>
         );
@@ -89,16 +89,16 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-background">
             {/* Header */}
-            <header className="bg-white shadow">
+            <header className="bg-card shadow">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center py-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
+                            <h1 className="text-3xl font-bold text-foreground">
                                 DSR Dashboard
                             </h1>
-                            <p className="text-gray-600">{companyInfo?.name}</p>
+                            <p className="text-muted-foreground">{companyInfo?.name}</p>
                         </div>
                         <Button onClick={handleSignOut} variant="outline">
                             <LogOut className="h-4 w-4 mr-2" />
@@ -122,7 +122,7 @@ export default function DashboardPage() {
                         </CardHeader>
                         <CardContent>
                             <div className="flex items-center space-x-2">
-                                <div className="flex-1 p-3 bg-gray-50 rounded-md font-mono text-sm">
+                                <div className="flex-1 p-3 bg-muted rounded-md font-mono text-sm text-muted-foreground">
                                     {companyInfo &&
                                         `${window.location.origin}/dsr/${companyInfo.dsrFormIdentifier}`}
                                 </div>

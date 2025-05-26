@@ -5,6 +5,7 @@ import type React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Alert } from "@heroui/alert"
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -21,7 +22,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle } from "lucide-react";
 
 interface DSRFormProps {
@@ -103,9 +103,7 @@ export default function DSRForm({ companyIdentifier }: DSRFormProps) {
             <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {error && (
-                        <Alert variant="destructive">
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
+                        <Alert variant="faded" color="danger" title="Error" description={error} />
                     )}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -188,17 +186,8 @@ export default function DSRForm({ companyIdentifier }: DSRFormProps) {
                             rows={4}
                         />
                     </div>
-
-                    <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-                        <p className="text-sm text-blue-800">
-                            <strong>Privacy Notice:</strong> The information you
-                            provide will be used solely for processing your data
-                            subject request. We will respond to your request
-                            within the timeframe required by applicable privacy
-                            laws.
-                        </p>
-                    </div>
-
+                        
+                    <Alert variant="faded" color="primary" title="Privacy Notice" description="The information you provide will be used solely for processing your data subject request. We will respond to your request within the timeframe required by applicable privacy laws." />
                     <Button type="submit" className="w-full" disabled={loading}>
                         {loading ? "Submitting Request..." : "Submit Request"}
                     </Button>

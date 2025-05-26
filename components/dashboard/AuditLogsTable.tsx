@@ -5,7 +5,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Chip } from "@heroui/chip";
-import { User } from "@heroui/user";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
@@ -254,7 +253,7 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                             </TableHeader>
                             <TableBody>
                                 {logs.map((log) => (
-                                    <TableRow key={log._id} className="hover:bg-muted/50 transition-colors cursor-pointer group">                                        <TableCell className="text-sm whitespace-nowrap">
+                                    <TableRow key={log._id} className="hover:bg-muted/50 transition-colors cursor-pointer">                                        <TableCell className="text-sm whitespace-nowrap">
                                         <div className="font-medium">
                                             {format(new Date(log.timestamp), "MMM dd, yyyy")}
                                         </div>
@@ -286,9 +285,9 @@ export function AuditLogsTable({ companyId }: AuditLogsTableProps) {
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center space-x-2">
-                                                    <div className="text-xs">
-                                                        {log.userName || "No email"}
-                                                    </div>
+                                                <div className="text-xs">
+                                                    {log.userName || "No email"}
+                                                </div>
                                             </div>
                                         </TableCell>
                                         <TableCell className="max-w-xs">

@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import type React from "react";
@@ -18,9 +19,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en">
-            <body className={inter.className}>
-                <Providers themeProps={{ attribute: "class", defaultTheme: "system", enableSystem: true }}>
+        <html lang="en" suppressHydrationWarning>
+            <body className={clsx(
+                "min-h-screen bg-background font-sans antialiased",
+                inter.className,
+            )}>
+                <Providers themeProps={{ attribute: "class", defaultTheme: "system", enableSystem: true, }}>
                     {children}
                 </Providers>
             </body>
