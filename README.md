@@ -13,6 +13,13 @@ PrivTrace is a privacy-focused application designed to handle Data Subject Reque
   * Designed with GDPR, SOC 2, HIPAA, ISO 27001, and PCI DSS compliance in mind.
 * **Access Control** 👤🚦: Ensures that users can only see logs and data relevant to their respective companies. All audit and data endpoints require valid user sessions.
 
+## Screenshots 🖼️📷
+![Landing Page](https://github.com/user-attachments/assets/91004e12-d3d2-4769-9172-345672d9ad40)
+![Dashboard](https://github.com/user-attachments/assets/fd0c5f45-6789-41a4-b0fe-43e29774d82e)
+![Audit Log](https://github.com/user-attachments/assets/ab36f988-ce48-47e3-96bb-c48b7d3decc0)
+![DSR Form](https://github.com/user-attachments/assets/787a2ded-a8e8-40e6-80b4-89e0cccf176c)
+
+
 ## Technical Overview 💻⚙️
 
 * **Primary Languages**: TypeScript (97.5%), CSS (2.3%), JavaScript (0.2%)
